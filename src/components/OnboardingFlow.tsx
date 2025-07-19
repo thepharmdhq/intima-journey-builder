@@ -10,7 +10,7 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle } from 'lucide-react';
+import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +26,11 @@ interface OnboardingData {
   intimacyGoals: string[];
   affectionFrequency: string;
   dataConsent: boolean;
+}
+
+interface LoginData {
+  email: string;
+  password: string;
 }
 
 const TOTAL_STEPS = 9;
@@ -48,6 +53,10 @@ const LOADING_FACTS = [
 
 export default function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoginMode, setIsLoginMode] = useState(false);
+  const [isLoginLoading, setIsLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  
   const [data, setData] = useState<OnboardingData>({
     firstName: '',
     age: '',
@@ -60,6 +69,12 @@ export default function OnboardingFlow() {
     affectionFrequency: '',
     dataConsent: false
   });
+
+  const [loginData, setLoginData] = useState<LoginData>({
+    email: '',
+    password: ''
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [loadingFactIndex, setLoadingFactIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -78,6 +93,11 @@ export default function OnboardingFlow() {
     setData(prev => ({ ...prev, [field]: value }));
   };
 
+  const updateLoginData = (field: keyof LoginData, value: string) => {
+    setLoginData(prev => ({ ...prev, [field]: value }));
+    if (loginError) setLoginError(''); // Clear error when user types
+  };
+
   const nextStep = () => {
     if (currentStep < TOTAL_STEPS) {
       setCurrentStep(prev => prev + 1);
@@ -87,6 +107,30 @@ export default function OnboardingFlow() {
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
+    }
+  };
+
+  const handleLogin = async () => {
+    if (!loginData.email || !loginData.password) {
+      setLoginError('Please enter both email and password');
+      return;
+    }
+
+    setIsLoginLoading(true);
+    setLoginError('');
+
+    try {
+      // TODO: Implement Supabase authentication
+      // For now, simulate login process
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Simulate successful login - in real app this would redirect to dashboard
+      console.log('Login successful for:', loginData.email);
+      
+    } catch (error) {
+      setLoginError('Invalid email or password. Please try again.');
+    } finally {
+      setIsLoginLoading(false);
     }
   };
 
@@ -129,7 +173,108 @@ export default function OnboardingFlow() {
     setCurrentStep(TOTAL_STEPS);
   };
 
+  const renderLoginForm = () => {
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <div className="text-center space-y-2">
+          <Heart className="w-16 h-16 mx-auto text-primary animate-pulse-glow" />
+          <h1 className="text-4xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+            Welcome Back
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-md mx-auto">
+            Sign in to continue your intimacy journey
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="login-email" className="flex items-center gap-2">
+              <Mail className="w-4 h-4" />
+              Email
+            </Label>
+            <Input
+              id="login-email"
+              type="email"
+              value={loginData.email}
+              onChange={(e) => updateLoginData('email', e.target.value)}
+              placeholder="Enter your email"
+              className="transition-all duration-300 focus:shadow-soft"
+              disabled={isLoginLoading}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="login-password" className="flex items-center gap-2">
+              <Lock className="w-4 h-4" />
+              Password
+            </Label>
+            <Input
+              id="login-password"
+              type="password"
+              value={loginData.password}
+              onChange={(e) => updateLoginData('password', e.target.value)}
+              placeholder="Enter your password"
+              className="transition-all duration-300 focus:shadow-soft"
+              disabled={isLoginLoading}
+            />
+          </div>
+
+          {loginError && (
+            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{loginError}</p>
+            </div>
+          )}
+
+          <div className="space-y-3 pt-2">
+            <Button 
+              onClick={handleLogin}
+              disabled={isLoginLoading || !loginData.email || !loginData.password}
+              className="w-full text-lg py-6 h-auto"
+              variant="gradient"
+            >
+              {isLoginLoading ? (
+                <>
+                  <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                <>
+                  Sign In
+                  <Heart className="ml-2 w-5 h-5" />
+                </>
+              )}
+            </Button>
+
+            <div className="text-center space-y-2">
+              <button 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                onClick={() => {/* TODO: Implement forgot password */}}
+              >
+                Forgot your password?
+              </button>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-border">
+            <Button 
+              variant="ghost" 
+              onClick={() => setIsLoginMode(false)}
+              className="w-full text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft className="mr-2 w-4 h-4" />
+              Back to Sign Up
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderStep = () => {
+    if (isLoginMode) {
+      return renderLoginForm();
+    }
+
     switch (currentStep) {
       case 1:
         return (
@@ -143,15 +288,31 @@ export default function OnboardingFlow() {
                 Answer a few questions—get your personalized intimacy plan.
               </p>
             </div>
-            <Button 
-              variant="gradient" 
-              size="lg" 
-              onClick={nextStep}
-              className="text-lg px-12 py-6 h-auto"
-            >
-              Let's Begin
-              <Sparkles className="ml-2 w-5 h-5" />
-            </Button>
+            
+            <div className="space-y-4">
+              <Button 
+                variant="gradient" 
+                size="lg" 
+                onClick={nextStep}
+                className="text-lg px-12 py-6 h-auto w-full"
+              >
+                Let's Begin
+                <Sparkles className="ml-2 w-5 h-5" />
+              </Button>
+
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">
+                  Already have an account?
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsLoginMode(true)}
+                  className="w-full"
+                >
+                  Log In
+                </Button>
+              </div>
+            </div>
           </div>
         );
 
@@ -520,19 +681,21 @@ export default function OnboardingFlow() {
   return (
     <div className="min-h-screen bg-gradient-sunset flex items-center justify-center p-4">
       <Card className="w-full max-w-lg shadow-card animate-fade-in">
-        <CardHeader className="text-center">
-          <div className="space-y-3">
-            <Progress value={(currentStep / TOTAL_STEPS) * 100} className="w-full" />
-            <p className="text-sm text-muted-foreground">
-              Step {currentStep} of {TOTAL_STEPS}
-            </p>
-          </div>
-        </CardHeader>
+        {!isLoginMode && (
+          <CardHeader className="text-center">
+            <div className="space-y-3">
+              <Progress value={(currentStep / TOTAL_STEPS) * 100} className="w-full" />
+              <p className="text-sm text-muted-foreground">
+                Step {currentStep} of {TOTAL_STEPS}
+              </p>
+            </div>
+          </CardHeader>
+        )}
         
         <CardContent className="p-8">
           {renderStep()}
           
-          {currentStep > 1 && currentStep < 7 && (
+          {!isLoginMode && currentStep > 1 && currentStep < 7 && (
             <div className="flex gap-3 mt-8">
               <Button 
                 variant="outline" 
@@ -551,7 +714,7 @@ export default function OnboardingFlow() {
             </div>
           )}
           
-          {currentStep === 7 && (
+          {!isLoginMode && currentStep === 7 && (
             <div className="flex gap-3 mt-8">
               <Button 
                 variant="outline" 
