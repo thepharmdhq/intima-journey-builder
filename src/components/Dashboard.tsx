@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { User, Settings, FileText, CreditCard, LogOut, HelpCircle, Trash2, Menu, Heart, Brain, Target, Zap, Award, Clock, BookOpen, MessageCircle, Check, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface DashboardProps {
   userData: {
@@ -22,20 +24,88 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dailyResponse, setDailyResponse] = useState<string>('');
   const [actionCompleted, setActionCompleted] = useState(false);
+  const [recentAssessments, setRecentAssessments] = useState<any[]>([]);
+  const [intimacyScore, setIntimacyScore] = useState<string>('0.0');
+  const [focusAreas, setFocusAreas] = useState<any[]>([]);
 
-  // Calculate intimacy score (decimal format)
-  const calculateIntimacyScore = () => {
-    const scores = [
-      userData.conflictComfort * 2,
-      userData.sexualSatisfaction * 2, 
-      userData.bodyImageRating * 2,
-      userData.intimacyGoals.length * 2
-    ];
-    const score = scores.reduce((a, b) => a + b, 0) / scores.length;
-    return (score / 10).toFixed(1);
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Load recent assessment results
+      const { data: resultsData, error: resultsError } = await supabase
+        .from('assessment_results')
+        .select(`
+          *,
+          assessments!inner(name)
+        `)
+        .eq('user_id', user.id)
+        .order('completed_at', { ascending: false })
+        .limit(3);
+
+      if (resultsError) {
+        console.error('Error loading results:', resultsError);
+      } else {
+        const formattedResults = resultsData?.map(result => ({
+          name: result.assessments.name,
+          icon: FileText,
+          date: new Date(result.completed_at).toLocaleDateString(),
+          score: Math.round(result.overall_score),
+          assessmentId: result.assessment_id,
+          sessionId: result.session_id
+        })) || [];
+        
+        setRecentAssessments(formattedResults);
+
+        // Calculate overall intimacy score from recent assessments
+        if (formattedResults.length > 0) {
+          const avgScore = formattedResults.reduce((sum, result) => sum + result.score, 0) / formattedResults.length;
+          setIntimacyScore((avgScore / 10).toFixed(1));
+        } else {
+          // Fallback to original calculation if no assessments
+          const scores = [
+            userData.conflictComfort * 2,
+            userData.sexualSatisfaction * 2, 
+            userData.bodyImageRating * 2,
+            userData.intimacyGoals.length * 2
+          ];
+          const score = scores.reduce((a, b) => a + b, 0) / scores.length;
+          setIntimacyScore((score / 10).toFixed(1));
+        }
+
+        // Generate focus areas based on domain scores
+        const allDomainScores = resultsData?.reduce((acc, result) => {
+          const domains = result.domain_scores || {};
+          Object.entries(domains).forEach(([domain, score]) => {
+            if (!acc[domain]) acc[domain] = [];
+            acc[domain].push(typeof score === 'number' ? score : 0);
+          });
+          return acc;
+        }, {} as { [key: string]: number[] }) || {};
+
+        const focusAreasData = Object.entries(allDomainScores).map(([domain, scores]) => {
+          const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+          return {
+            area: domain,
+            progress: Math.round(avgScore),
+            priority: avgScore < 60 ? 'High' : avgScore < 80 ? 'Medium' : 'Low'
+          };
+        }).sort((a, b) => a.progress - b.progress);
+
+        setFocusAreas(focusAreasData);
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    }
   };
 
   const handleLogout = () => {
@@ -49,23 +119,9 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     navigate('/');
   };
 
-  const intimacyScore = calculateIntimacyScore();
   const streakDays = 7;
   const todaysQuestion = "How did you express appreciation for yourself or your partner today?";
   const todaysAction = "Try a 5-minute sensate focus exercise with your partner";
-
-  // Mock data for recent assessments
-  const recentAssessments = [
-    { name: 'PAIR Assessment', icon: Heart, date: '2 days ago', score: 8.2 },
-    { name: 'FSFI Scale', icon: Brain, date: '1 week ago', score: 7.8 },
-    { name: 'Body Image', icon: Target, date: '2 weeks ago', score: 6.9 }
-  ];
-
-  const focusAreas = [
-    { area: 'Communication', progress: 75, priority: 'High' },
-    { area: 'Physical Intimacy', progress: 60, priority: 'Medium' },
-    { area: 'Emotional Connection', progress: 85, priority: 'High' }
-  ];
 
   const recommendedAssessments = [
     'Conflict Resolution Scale',
@@ -338,13 +394,18 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                       <p className="text-xs text-muted-foreground">{assessment.date}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{assessment.score}</span>
-                    <Button variant="outline" size="sm" className="rounded-full">
-                      <RefreshCw className="w-3 h-3 mr-1" />
-                      Retake
-                    </Button>
-                  </div>
+                   <div className="flex items-center gap-2">
+                     <span className="text-sm font-medium">{assessment.score}</span>
+                     <Button 
+                       variant="outline" 
+                       size="sm" 
+                       className="rounded-full"
+                       onClick={() => navigate(`/assessment/${assessment.assessmentId}`)}
+                     >
+                       <RefreshCw className="w-3 h-3 mr-1" />
+                       Retake
+                     </Button>
+                   </div>
                 </div>
               ))}
             </div>

@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Assessments from "./components/Assessments";
+import AssessmentTest from "./pages/AssessmentTest";
+import AssessmentReport from "./pages/AssessmentReport";
 import MyReports from "./pages/MyReports";
 import MySubscription from "./pages/MySubscription";
 import Profile from "./pages/Profile";
@@ -28,7 +30,9 @@ const App = () => (
           <Route path="/my-subscription" element={<MySubscription />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/assessment/:assessmentId" element={<AssessmentTest />} />
+        <Route path="/assessment/:assessmentId/report/:sessionId" element={<AssessmentReport />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -3,29 +3,39 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, FileText, Clock, Star, CheckCircle, PlayCircle } from 'lucide-react';
+import { ArrowLeft, FileText, Clock, Star, CheckCircle, PlayCircle, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Assessment {
   id: string;
   name: string;
   description: string;
   category: string;
-  estimatedTime: number;
-  isRecommended: boolean;
-  isCompleted: boolean;
+  estimated_time: number;
+  is_recommended: boolean;
+  sex_specific?: 'male' | 'female';
+  isCompleted?: boolean;
   lastScore?: number;
-  icon: React.ComponentType<any>;
-  sexSpecific?: 'male' | 'female';
+  lastCompletedAt?: string;
 }
 
 const Assessments: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [userBiologicalSex, setUserBiologicalSex] = useState<string>('');
+  const [assessments, setAssessments] = useState<Assessment[]>([]);
+  const [userResults, setUserResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get user's biological sex from stored onboarding data
   useEffect(() => {
+    loadAssessments();
+    getUserBiologicalSex();
+  }, []);
+
+  const getUserBiologicalSex = () => {
     const storedUserData = localStorage.getItem('userData');
     if (storedUserData) {
       try {
@@ -35,394 +45,294 @@ const Assessments: React.FC = () => {
         console.log('Could not parse user data for biological sex');
       }
     }
-  }, []);
+  };
 
-  const assessments: Assessment[] = [
-    {
-      id: 'pair',
-      name: 'PAIR Assessment',
-      description: '17-item scale covering emotional, social, sexual, intellectual & recreational intimacy',
-      category: 'Relationship Health',
-      estimatedTime: 15,
-      isRecommended: true,
-      isCompleted: true,
-      lastScore: 8.2,
-      icon: FileText
-    },
-    {
-      id: 'fsfi',
-      name: 'Female Sexual Function Index (FSFI)',
-      description: '19 items on desire, arousal, lubrication, orgasm, satisfaction, and pain',
-      category: 'Physical Intimacy',
-      estimatedTime: 12,
-      isRecommended: true,
-      isCompleted: true,
-      lastScore: 7.8,
-      icon: FileText,
-      sexSpecific: 'female'
-    },
-    {
-      id: 'body-image',
-      name: 'Body Image Scale',
-      description: 'Assess comfort and confidence with physical self-perception',
-      category: 'Self-Assessment',
-      estimatedTime: 8,
-      isRecommended: false,
-      isCompleted: true,
-      lastScore: 6.9,
-      icon: FileText
-    },
-    {
-      id: 'conflict-resolution',
-      name: 'Conflict Resolution Scale',
-      description: 'Evaluate how you and your partner handle disagreements and conflicts',
-      category: 'Relationship Health',
-      estimatedTime: 12,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'intimacy-frequency',
-      name: 'Intimacy Frequency Assessment',
-      description: 'Track patterns and satisfaction with physical and emotional intimacy',
-      category: 'Physical Intimacy',
-      estimatedTime: 7,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'emotional-intimacy',
-      name: 'Emotional Intimacy Scale',
-      description: 'Measure emotional connection and vulnerability in your relationship',
-      category: 'Emotional Connection',
-      estimatedTime: 10,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'communication-patterns',
-      name: 'Communication Patterns',
-      description: 'Analyze how you and your partner communicate during daily interactions',
-      category: 'Emotional Connection',
-      estimatedTime: 9,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'self-esteem',
-      name: 'Self-Esteem Inventory',
-      description: 'Assess personal confidence and self-worth in relationship context',
-      category: 'Self-Assessment',
-      estimatedTime: 6,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    // New assessments
-    {
-      id: 'rfs',
-      name: 'Relationship Flourishing Scale (RFS)',
-      description: 'Assesses overall relationship health and thriving across multiple domains',
-      category: 'Relationship Health',
-      estimatedTime: 10,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'sssw',
-      name: 'Sexual Satisfaction Scale for Women (SSSW)',
-      description: 'Multi-dimensional measure of female sexual satisfaction',
-      category: 'Physical Intimacy',
-      estimatedTime: 12,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText,
-      sexSpecific: 'female'
-    },
-    {
-      id: 'iief-5',
-      name: 'International Index of Erectile Function (IIEF-5)',
-      description: '5-item male sexual function screener',
-      category: 'Physical Intimacy',
-      estimatedTime: 5,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText,
-      sexSpecific: 'male'
-    },
-    {
-      id: 'ecr-r',
-      name: 'Experiences in Close Relationships—Revised (ECR-R)',
-      description: 'Adult attachment anxiety & avoidance assessment',
-      category: 'Emotional Connection',
-      estimatedTime: 18,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'das',
-      name: 'Dyadic Adjustment Scale (DAS)',
-      description: 'Gold-standard 32-item assessment for satisfaction, cohesion, consensus, and affection',
-      category: 'Relationship Health',
-      estimatedTime: 20,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'csi-16',
-      name: 'Couple Satisfaction Index (CSI-16)',
-      description: 'Brief, highly sensitive 16-item satisfaction scale',
-      category: 'Relationship Health',
-      estimatedTime: 8,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'ras',
-      name: 'Relationship Assessment Scale (RAS)',
-      description: '7-item global relationship satisfaction assessment',
-      category: 'Relationship Health',
-      estimatedTime: 5,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'gottman-checkup',
-      name: 'Gottman Relationship Checkup Modules',
-      description: 'Short screens on friendship, conflict, values, and intimacy',
-      category: 'Relationship Health',
-      estimatedTime: 15,
-      isRecommended: true,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'emotional-openness',
-      name: 'Emotional Openness & Self-Disclosure Scale',
-      description: 'Willingness to share thoughts & feelings with your partner',
-      category: 'Emotional Connection',
-      estimatedTime: 10,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'passion-intimacy',
-      name: 'Passion and Intimacy Scale',
-      description: 'Separately measures romantic passion, sexual passion & intimacy',
-      category: 'Emotional Connection',
-      estimatedTime: 12,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'sexual-satisfaction',
-      name: 'Sexual Satisfaction (SS)',
-      description: 'Brief scale for quick satisfaction snapshots',
-      category: 'Physical Intimacy',
-      estimatedTime: 3,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
-    },
-    {
-      id: 'attachment-screening',
-      name: 'Attachment Style Screening',
-      description: 'Brief check on secure, anxious, and avoidant tendencies',
-      category: 'Self-Assessment',
-      estimatedTime: 5,
-      isRecommended: false,
-      isCompleted: false,
-      icon: FileText
+  const loadAssessments = async () => {
+    try {
+      setLoading(true);
+      
+      // Load assessments
+      const { data: assessmentsData, error: assessmentsError } = await supabase
+        .from('assessments')
+        .select('*')
+        .order('name');
+
+      if (assessmentsError) throw assessmentsError;
+
+      // Load user's assessment results
+      const { data: { user } } = await supabase.auth.getUser();
+      let resultsData = [];
+      
+      if (user) {
+        const { data, error: resultsError } = await supabase
+          .from('assessment_results')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('completed_at', { ascending: false });
+
+        if (resultsError) {
+          console.error('Error loading results:', resultsError);
+        } else {
+          resultsData = data || [];
+        }
+      }
+
+      // Merge assessment data with user results
+      const assessmentsWithResults = assessmentsData?.map(assessment => {
+        const latestResult = resultsData.find(result => result.assessment_id === assessment.id);
+        return {
+          ...assessment,
+          isCompleted: !!latestResult,
+          lastScore: latestResult?.overall_score,
+          lastCompletedAt: latestResult?.completed_at
+        };
+      }) || [];
+
+      setAssessments(assessmentsWithResults);
+      setUserResults(resultsData);
+    } catch (error) {
+      console.error('Error loading assessments:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load assessments",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const categories = ['all', 'Relationship Health', 'Physical Intimacy', 'Emotional Connection', 'Self-Assessment'];
+  // Get unique categories from assessments
+  const categories = ['all', ...Array.from(new Set(assessments.map(a => a.category)))];
 
   // Filter assessments based on biological sex
   const filteredByBiologicalSex = assessments.filter(assessment => {
-    if (!assessment.sexSpecific) return true;
-    return assessment.sexSpecific === userBiologicalSex;
+    if (!assessment.sex_specific) return true;
+    return assessment.sex_specific === userBiologicalSex;
   });
 
-  const recommendedAssessments = filteredByBiologicalSex.filter(a => a.isRecommended);
+  // Filter by category
   const filteredAssessments = selectedCategory === 'all' 
     ? filteredByBiologicalSex 
-    : filteredByBiologicalSex.filter(a => a.category === selectedCategory);
+    : filteredByBiologicalSex.filter(assessment => assessment.category === selectedCategory);
 
-  const getActionButton = (assessment: Assessment) => {
+  // Separate recommended vs all assessments
+  const recommendedAssessments = filteredAssessments.filter(a => a.is_recommended);
+
+  const startAssessment = (assessmentId: string) => {
+    navigate(`/assessment/${assessmentId}`);
+  };
+
+  const getActionButton = (assessment: Assessment): JSX.Element => {
     if (assessment.isCompleted) {
       return (
-        <Button variant="outline" size="sm" className="rounded-full">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Retake
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => startAssessment(assessment.id)}
+            className="flex items-center gap-2"
+          >
+            <RotateCcw className="w-4 h-4" />
+            Retake
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              const latestResult = userResults.find(r => r.assessment_id === assessment.id);
+              if (latestResult) {
+                navigate(`/assessment/${assessment.id}/report/${latestResult.session_id}`);
+              }
+            }}
+          >
+            View Report
+          </Button>
+        </div>
       );
     }
+
     return (
-      <Button size="sm" className="rounded-full">
-        <PlayCircle className="w-3 h-3 mr-1" />
+      <Button
+        onClick={() => startAssessment(assessment.id)}
+        className="flex items-center gap-2"
+      >
+        <PlayCircle className="w-4 h-4" />
         Start
       </Button>
     );
   };
 
   const AssessmentCard: React.FC<{ assessment: Assessment }> = ({ assessment }) => (
-    <Card className={`bg-white/80 border-border/50 shadow-sm hover:shadow-md transition-all duration-200 ${
-      assessment.isRecommended ? 'ring-2 ring-primary/20 bg-gradient-to-br from-primary/5 to-accent/5' : ''
-    }`}>
-      <CardHeader className="pb-4">
+    <Card key={assessment.id} className="transition-all duration-300 hover:shadow-lg border-l-4 border-l-primary/20 hover:border-l-primary">
+      <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <assessment.icon className="w-5 h-5 text-primary" />
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <FileText className="w-5 h-5 text-primary" />
+            </div>
             <div>
-              <CardTitle className="text-lg">{assessment.name}</CardTitle>
-              <div className="flex gap-2 mt-1">
-                {assessment.isRecommended && (
-                  <Badge variant="default" className="text-xs">
-                    <Star className="w-3 h-3 mr-1" />
-                    Recommended
-                  </Badge>
-                )}
-                {assessment.sexSpecific && (
-                  <Badge variant="secondary" className="text-xs">
-                    {assessment.sexSpecific === 'female' ? 'Female-specific' : 'Male-specific'}
-                  </Badge>
-                )}
-              </div>
+              <CardTitle className="text-lg font-semibold text-foreground leading-tight">
+                {assessment.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                {assessment.description}
+              </p>
             </div>
           </div>
-          {getActionButton(assessment)}
+          <div className="flex flex-col items-end gap-2">
+            {assessment.is_recommended && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Star className="w-3 h-3" />
+                Recommended
+              </Badge>
+            )}
+            {assessment.isCompleted && (
+              <Badge variant="outline" className="flex items-center gap-1 border-green-200 text-green-700">
+                <CheckCircle className="w-3 h-3" />
+                Completed
+              </Badge>
+            )}
+          </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{assessment.description}</p>
-        
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" />
-            {assessment.estimatedTime} minutes
-          </div>
-          {assessment.isCompleted && assessment.lastScore && (
+      
+      <CardContent className="pt-0">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
-              <span>Last Score: {assessment.lastScore}</span>
+              <Clock className="w-4 h-4" />
+              {assessment.estimated_time} min
             </div>
-          )}
-        </div>
-
-        {assessment.isCompleted && assessment.lastScore && (
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs">
-              <span>Progress</span>
-              <span>{assessment.lastScore}/10</span>
-            </div>
-            <Progress value={assessment.lastScore * 10} className="h-2" />
+            <Badge variant="outline" className="text-xs">
+              {assessment.category}
+            </Badge>
           </div>
-        )}
+          
+          <div className="flex items-center gap-3">
+            {assessment.isCompleted && assessment.lastScore && (
+              <div className="text-right">
+                <div className="text-sm font-medium text-foreground">
+                  Score: {Math.round(assessment.lastScore)}%
+                </div>
+                {assessment.lastCompletedAt && (
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(assessment.lastCompletedAt).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
+            )}
+            {getActionButton(assessment)}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading assessments...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => navigate('/')}
-              className="mr-4"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            <div className="flex items-center gap-3">
-              <FileText className="w-6 h-6 text-primary" />
-              <h1 className="text-xl font-bold">Assessments</h1>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-secondary/5">
+      {/* Header Section */}
+      <div className="bg-white/80 backdrop-blur-sm border-b">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="mb-4 hover:bg-primary/10"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Dashboard
+          </Button>
+          
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-foreground mb-4">
+              Relationship Assessments
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Take evidence-based assessments to gain deeper insights into your relationship health. 
+              Track your progress over time and receive personalized recommendations.
+            </p>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        {/* Hero Section */}
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold text-foreground">
-            Discover Your Intimacy Journey
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Take science-backed assessments to understand your relationship better and receive personalized insights.
-          </p>
-        </div>
-
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-              className="rounded-full"
-            >
-              {category === 'all' ? 'All Categories' : category}
-            </Button>
-          ))}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold mb-4">Filter by Category</h3>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                onClick={() => setSelectedCategory(category)}
+                className="capitalize"
+                size="sm"
+              >
+                {category === 'all' ? 'All Categories' : category}
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* Recommended Assessments */}
-        {selectedCategory === 'all' && recommendedAssessments.length > 0 && (
-          <section className="space-y-6">
-            <div className="text-center space-y-2">
-              <h3 className="text-2xl font-bold flex items-center justify-center gap-2">
-                <Star className="w-6 h-6 text-primary" />
-                Recommended for You
-              </h3>
-              <p className="text-muted-foreground">
-                Based on your intimacy goals and current progress
-              </p>
+        {recommendedAssessments.length > 0 && (
+          <div className="mb-12">
+            <div className="flex items-center gap-2 mb-6">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <h2 className="text-2xl font-bold text-foreground">Recommended for You</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid gap-4">
               {recommendedAssessments.map((assessment) => (
                 <AssessmentCard key={assessment.id} assessment={assessment} />
               ))}
             </div>
-          </section>
+          </div>
         )}
 
         {/* All Assessments */}
-        <section className="space-y-6">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold">
-              {selectedCategory === 'all' ? 'All Assessments' : selectedCategory}
-            </h3>
-            <p className="text-muted-foreground">
-              {selectedCategory === 'all' 
-                ? 'Explore our complete library of relationship assessments'
-                : `Assessments in the ${selectedCategory} category`
-              }
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            {selectedCategory === 'all' ? 'All Assessments' : `${selectedCategory} Assessments`}
+          </h2>
+          <div className="grid gap-4">
             {filteredAssessments.map((assessment) => (
               <AssessmentCard key={assessment.id} assessment={assessment} />
             ))}
           </div>
-        </section>
-      </main>
+        </div>
+
+        {filteredAssessments.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No Assessments Available</h3>
+            <p className="text-muted-foreground">
+              {selectedCategory === 'all' 
+                ? "No assessments are currently available." 
+                : `No assessments found in the ${selectedCategory} category.`}
+            </p>
+            {selectedCategory !== 'all' && (
+              <Button
+                variant="outline"
+                onClick={() => setSelectedCategory('all')}
+                className="mt-4"
+              >
+                View All Assessments
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
