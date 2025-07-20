@@ -38,6 +38,17 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     return (score / 10).toFixed(1);
   };
 
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem('userData');
+    
+    // Close the dropdown menu
+    setMenuOpen(false);
+    
+    // Navigate back to root path which will show the OnboardingFlow
+    navigate('/');
+  };
+
   const intimacyScore = calculateIntimacyScore();
   const streakDays = 7;
   const todaysQuestion = "How did you express appreciation for yourself or your partner today?";
@@ -50,7 +61,6 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
     { name: 'Body Image', icon: Target, date: '2 weeks ago', score: 6.9 }
   ];
 
-  // Mock data for personalized plan
   const focusAreas = [
     { area: 'Communication', progress: 75, priority: 'High' },
     { area: 'Physical Intimacy', progress: 60, priority: 'Medium' },
@@ -128,7 +138,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   <HelpCircle className="w-4 h-4" />
                   Support
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-muted/50">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-muted/50 cursor-pointer"
+                  onClick={handleLogout}
+                >
                   <LogOut className="w-4 h-4" />
                   Log Out
                 </DropdownMenuItem>
