@@ -93,16 +93,11 @@ const MySubscription = () => {
     return Math.round(plan.pricing.yearly / 12);
   };
 
-  // Updated plan change handler to handle both plan and billing changes
+  // Plan change handler to handle both plan and billing changes
   const handlePlanChange = (newPlan: string, newBilling: string) => {
     localStorage.setItem('selectedPlan', newPlan);
     localStorage.setItem('selectedBilling', newBilling);
     setSubscriptionData({ selectedPlan: newPlan, selectedBilling: newBilling });
-  };
-
-  const handleBillingChange = (newBilling: string) => {
-    localStorage.setItem('selectedBilling', newBilling);
-    setSubscriptionData(prev => ({ ...prev, selectedBilling: newBilling }));
   };
 
   const getNextBillingDate = () => {
@@ -270,35 +265,10 @@ const MySubscription = () => {
                 <div className="text-lg font-semibold">${currentPrice}</div>
               </div>
             </div>
-            
-            <Separator />
-            
-            <div className="space-y-3">
-              <h4 className="font-medium">Billing Cycle</h4>
-              <div className="flex gap-2">
-                <Button
-                  variant={subscriptionData.selectedBilling === 'monthly' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => handleBillingChange('monthly')}
-                >
-                  Monthly
-                </Button>
-                <Button
-                  variant={subscriptionData.selectedBilling === 'yearly' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => handleBillingChange('yearly')}
-                >
-                  Yearly
-                  <Badge variant="secondary" className="ml-2 text-xs">
-                    Save 31%
-                  </Badge>
-                </Button>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
-        {/* Plan Comparison - Updated to show all combinations */}
+        {/* Plan Options */}
         <Card className="bg-white/80 border-border/50 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
