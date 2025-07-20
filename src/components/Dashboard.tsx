@@ -355,7 +355,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
         </Card>
       </main>
 
-      {/* Floating Action Button */}
+      {/* Floating Action Button - Only show on dashboard */}
       <Button
         onClick={() => navigate('/assessments')}
         className="fixed bottom-6 right-6 rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 z-40"
