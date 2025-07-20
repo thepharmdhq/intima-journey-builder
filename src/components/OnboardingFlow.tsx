@@ -8,7 +8,7 @@ import { Slider } from "@/components/ui/slider"
 import { Progress } from "@/components/ui/progress"
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (data: any) => void;
 }
 
 interface ValidationResult {
@@ -31,7 +31,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     }
 
     if (currentStep > 25) {
-      onComplete();
+      onComplete({ name, age, relationshipLength });
     }
   }, [currentStep, navigate, onComplete]);
 
