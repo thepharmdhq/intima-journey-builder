@@ -175,95 +175,83 @@ export default function OnboardingFlow() {
 
   const renderLoginForm = () => {
     return (
-      <div className="space-y-6 animate-fade-in">
-        <div className="text-center space-y-2">
-          <Heart className="w-16 h-16 mx-auto text-primary animate-pulse-glow" />
-          <h1 className="text-4xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
-            Welcome Back
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-md mx-auto">
-            Sign in to continue your intimacy journey
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="login-email" className="flex items-center gap-2">
-              <Mail className="w-4 h-4" />
-              Email
-            </Label>
-            <Input
-              id="login-email"
-              type="email"
-              value={loginData.email}
-              onChange={(e) => updateLoginData('email', e.target.value)}
-              placeholder="Enter your email"
-              className="transition-all duration-300 focus:shadow-soft"
-              disabled={isLoginLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="login-password" className="flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              Password
-            </Label>
-            <Input
-              id="login-password"
-              type="password"
-              value={loginData.password}
-              onChange={(e) => updateLoginData('password', e.target.value)}
-              placeholder="Enter your password"
-              className="transition-all duration-300 focus:shadow-soft"
-              disabled={isLoginLoading}
-            />
-          </div>
-
-          {loginError && (
-            <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <p className="text-sm text-destructive">{loginError}</p>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/30 flex items-center justify-center p-4">
+        <div className="w-full max-w-sm space-y-8 animate-fade-in">
+          <div className="text-center space-y-4">
+            <Heart className="w-16 h-16 mx-auto text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">
+                Welcome Back
+              </h1>
+              <p className="text-muted-foreground mt-2">
+                Sign in to continue your intimacy journey
+              </p>
             </div>
-          )}
+          </div>
 
-          <div className="space-y-3 pt-2">
-            <Button 
-              onClick={handleLogin}
-              disabled={isLoginLoading || !loginData.email || !loginData.password}
-              className="w-full text-lg py-6 h-auto"
-              variant="gradient"
-            >
-              {isLoginLoading ? (
-                <>
-                  <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                  Signing In...
-                </>
-              ) : (
-                <>
-                  Sign In
-                  <Heart className="ml-2 w-5 h-5" />
-                </>
-              )}
-            </Button>
+          <div className="space-y-4">
+            <div className="space-y-3">
+              <Input
+                id="login-email"
+                type="email"
+                value={loginData.email}
+                onChange={(e) => updateLoginData('email', e.target.value)}
+                placeholder="Email"
+                className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm"
+                disabled={isLoginLoading}
+              />
+              <Input
+                id="login-password"
+                type="password"
+                value={loginData.password}
+                onChange={(e) => updateLoginData('password', e.target.value)}
+                placeholder="Password"
+                className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm"
+                disabled={isLoginLoading}
+              />
+            </div>
 
-            <div className="text-center space-y-2">
+            {loginError && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl">
+                <p className="text-sm text-destructive text-center">{loginError}</p>
+              </div>
+            )}
+
+            <div className="space-y-4 pt-2">
+              <Button 
+                onClick={handleLogin}
+                disabled={isLoginLoading || !loginData.email || !loginData.password}
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
+                variant="gradient"
+              >
+                {isLoginLoading ? (
+                  <>
+                    <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+
               <button 
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors block w-full text-center"
                 onClick={() => {/* TODO: Implement forgot password */}}
               >
                 Forgot your password?
               </button>
             </div>
-          </div>
 
-          <div className="pt-4 border-t border-border">
-            <Button 
-              variant="ghost" 
-              onClick={() => setIsLoginMode(false)}
-              className="w-full text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="mr-2 w-4 h-4" />
-              Back to Sign Up
-            </Button>
+            <div className="pt-6 text-center">
+              <Button 
+                variant="ghost" 
+                onClick={() => setIsLoginMode(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="mr-2 w-4 h-4" />
+                Back to Sign Up
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -278,36 +266,37 @@ export default function OnboardingFlow() {
     switch (currentStep) {
       case 1:
         return (
-          <div className="text-center space-y-6 animate-fade-in">
-            <div className="space-y-2">
-              <Heart className="w-16 h-16 mx-auto text-primary animate-pulse-glow" />
-              <h1 className="text-4xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
-                Deepen Your Connection
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-md mx-auto">
-                Answer a few questions—get your personalized intimacy plan.
-              </p>
+          <div className="text-center space-y-8 animate-fade-in">
+            <div className="space-y-6">
+              <Heart className="w-20 h-20 mx-auto text-primary" />
+              <div className="space-y-3">
+                <h1 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+                  Deepen Your Connection
+                </h1>
+                <p className="text-muted-foreground">
+                  Answer a few questions—get your personalized intimacy plan.
+                </p>
+              </div>
             </div>
             
             <div className="space-y-4">
               <Button 
                 variant="gradient" 
-                size="lg" 
                 onClick={nextStep}
-                className="text-lg px-12 py-6 h-auto w-full"
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
               >
                 Let's Begin
                 <Sparkles className="ml-2 w-5 h-5" />
               </Button>
 
-              <div className="pt-4 border-t border-border">
+              <div className="pt-6">
                 <p className="text-sm text-muted-foreground mb-3">
                   Already have an account?
                 </p>
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   onClick={() => setIsLoginMode(true)}
-                  className="w-full"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   Log In
                 </Button>
@@ -318,108 +307,96 @@ export default function OnboardingFlow() {
 
       case 2:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Tell us about yourself</h2>
-              <p className="text-muted-foreground">Let's start with the basics</p>
+              <p className="text-muted-foreground text-sm">Let's start with the basics</p>
             </div>
             
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  value={data.firstName}
-                  onChange={(e) => updateData('firstName', e.target.value)}
-                  placeholder="Enter your first name"
-                  className="transition-all duration-300 focus:shadow-soft"
-                />
-              </div>
+              <Input
+                id="firstName"
+                value={data.firstName}
+                onChange={(e) => updateData('firstName', e.target.value)}
+                placeholder="First Name"
+                className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm"
+              />
               
-              <div className="space-y-2">
-                <Label htmlFor="age">Age</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  value={data.age}
-                  onChange={(e) => updateData('age', e.target.value)}
-                  placeholder="Enter your age"
-                  className="transition-all duration-300 focus:shadow-soft"
-                />
-              </div>
+              <Input
+                id="age"
+                type="number"
+                value={data.age}
+                onChange={(e) => updateData('age', e.target.value)}
+                placeholder="Age"
+                className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm"
+              />
               
-              <div className="space-y-2">
-                <Label>Biological Sex</Label>
-                <Select value={data.biologicalSex} onValueChange={(value) => updateData('biologicalSex', value)}>
-                  <SelectTrigger className="transition-all duration-300 focus:shadow-soft">
-                    <SelectValue placeholder="Select biological sex" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Male</SelectItem>
-                    <SelectItem value="female">Female</SelectItem>
-                    <SelectItem value="intersex">Intersex</SelectItem>
-                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select value={data.biologicalSex} onValueChange={(value) => updateData('biologicalSex', value)}>
+                <SelectTrigger className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm">
+                  <SelectValue placeholder="Biological sex" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="intersex">Intersex</SelectItem>
+                  <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
               
-              <div className="space-y-2">
-                <Label>Gender Identity</Label>
-                <Select value={data.genderIdentity} onValueChange={(value) => updateData('genderIdentity', value)}>
-                  <SelectTrigger className="transition-all duration-300 focus:shadow-soft">
-                    <SelectValue placeholder="Select gender identity" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="man">Man</SelectItem>
-                    <SelectItem value="woman">Woman</SelectItem>
-                    <SelectItem value="non-binary">Non-binary</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
-                    <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select value={data.genderIdentity} onValueChange={(value) => updateData('genderIdentity', value)}>
+                <SelectTrigger className="h-14 text-base bg-white border-border rounded-2xl px-4 shadow-sm">
+                  <SelectValue placeholder="Gender identity" />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem value="man">Man</SelectItem>
+                  <SelectItem value="woman">Woman</SelectItem>
+                  <SelectItem value="non-binary">Non-binary</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         );
 
       case 3:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <Users className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Relationship Status</h2>
-              <p className="text-muted-foreground">Help us understand your current situation</p>
+              <p className="text-muted-foreground text-sm">Help us understand your current situation</p>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-3">
               <RadioGroup 
                 value={data.relationshipStatus} 
                 onValueChange={(value) => updateData('relationshipStatus', value)}
                 className="space-y-3"
               >
-                <div className="flex items-center space-x-2 p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
                   <RadioGroupItem value="Single" id="single" />
-                  <Label htmlFor="single" className="flex-1 cursor-pointer">Single</Label>
+                  <Label htmlFor="single" className="flex-1 cursor-pointer text-base">Single</Label>
                 </div>
-                <div className="flex items-center space-x-2 p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
                   <RadioGroupItem value="Partnered" id="partnered" />
-                  <Label htmlFor="partnered" className="flex-1 cursor-pointer">Partnered</Label>
+                  <Label htmlFor="partnered" className="flex-1 cursor-pointer text-base">Partnered</Label>
                 </div>
-                <div className="flex items-center space-x-2 p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
                   <RadioGroupItem value="Married" id="married" />
-                  <Label htmlFor="married" className="flex-1 cursor-pointer">Married</Label>
+                  <Label htmlFor="married" className="flex-1 cursor-pointer text-base">Married</Label>
                 </div>
               </RadioGroup>
               
               {data.relationshipStatus === 'Single' && (
-                <div className="space-y-2 animate-slide-up">
-                  <Label>When was your last partnership?</Label>
+                <div className="pt-4 animate-slide-up">
+                  <p className="text-sm text-muted-foreground mb-3">When was your last partnership?</p>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
                         variant="outline"
                         className={cn(
-                          "w-full justify-start text-left font-normal",
+                          "w-full h-14 justify-start text-left font-normal bg-white border-border rounded-2xl px-4 shadow-sm",
                           !data.lastPartnership && "text-muted-foreground"
                         )}
                       >
@@ -427,7 +404,7 @@ export default function OnboardingFlow() {
                         {data.lastPartnership ? format(data.lastPartnership, "PPP") : "Pick a date"}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
                       <Calendar
                         mode="single"
                         selected={data.lastPartnership}
@@ -446,34 +423,36 @@ export default function OnboardingFlow() {
 
       case 4:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Sex & Intimacy History</h2>
-              <p className="text-muted-foreground">This helps us personalize your recommendations</p>
+              <p className="text-muted-foreground text-sm">This helps us personalize your recommendations</p>
             </div>
             
             <div className="space-y-6">
               <div className="space-y-4">
-                <Label className="text-base">Have you been sexually active?</Label>
-                <RadioGroup 
-                  value={data.sexuallyActive.toString()} 
-                  onValueChange={(value) => updateData('sexuallyActive', value === 'true')}
-                  className="flex space-x-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="true" id="active-yes" />
-                    <Label htmlFor="active-yes">Yes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="false" id="active-no" />
-                    <Label htmlFor="active-no">No</Label>
-                  </div>
-                </RadioGroup>
+                <p className="text-base font-medium text-center">Have you been sexually active?</p>
+                <div className="space-y-3">
+                  <RadioGroup 
+                    value={data.sexuallyActive.toString()} 
+                    onValueChange={(value) => updateData('sexuallyActive', value === 'true')}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
+                      <RadioGroupItem value="true" id="active-yes" />
+                      <Label htmlFor="active-yes" className="flex-1 cursor-pointer text-base">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
+                      <RadioGroupItem value="false" id="active-no" />
+                      <Label htmlFor="active-no" className="flex-1 cursor-pointer text-base">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
               </div>
               
               {data.sexuallyActive && (
-                <div className="space-y-4 animate-slide-up">
-                  <Label className="text-base">Number of partners in the past year</Label>
+                <div className="space-y-6 animate-slide-up">
+                  <p className="text-base font-medium text-center">Number of partners in the past year</p>
                   <div className="space-y-4">
                     <Slider
                       value={[data.partnersLastYear]}
@@ -483,8 +462,8 @@ export default function OnboardingFlow() {
                       className="w-full"
                     />
                     <div className="text-center">
-                      <span className="text-2xl font-semibold text-primary">{data.partnersLastYear}</span>
-                      <span className="text-muted-foreground ml-2">
+                      <span className="text-3xl font-bold text-primary">{data.partnersLastYear}</span>
+                      <span className="text-muted-foreground ml-2 text-base">
                         {data.partnersLastYear === 1 ? 'partner' : 'partners'}
                       </span>
                     </div>
@@ -497,25 +476,25 @@ export default function OnboardingFlow() {
 
       case 5:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <MessageCircle className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Intimacy Goals</h2>
-              <p className="text-muted-foreground">What areas would you like to improve? (Select all that apply)</p>
+              <p className="text-muted-foreground text-sm">What areas would you like to improve? (Select all that apply)</p>
             </div>
             
             <div className="space-y-3">
               {INTIMACY_GOALS.map((goal) => (
                 <div 
                   key={goal}
-                  className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
+                  className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer"
                   onClick={() => handleGoalToggle(goal)}
                 >
                   <Checkbox 
                     checked={data.intimacyGoals.includes(goal)}
                     onChange={() => handleGoalToggle(goal)}
                   />
-                  <Label className="flex-1 cursor-pointer">{goal}</Label>
+                  <Label className="flex-1 cursor-pointer text-base">{goal}</Label>
                 </div>
               ))}
             </div>
@@ -524,10 +503,10 @@ export default function OnboardingFlow() {
 
       case 6:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Affection Frequency</h2>
-              <p className="text-muted-foreground">How often do you currently express or receive affection?</p>
+              <p className="text-muted-foreground text-sm">How often do you currently express or receive affection?</p>
             </div>
             
             <RadioGroup 
@@ -541,10 +520,10 @@ export default function OnboardingFlow() {
                 { value: 'monthly', label: 'Few times per month', description: 'Occasionally throughout the month' },
                 { value: 'rarely', label: 'Rarely', description: 'Very infrequently' }
               ].map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <div key={option.value} className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
                   <RadioGroupItem value={option.value} id={option.value} />
                   <div className="flex-1">
-                    <Label htmlFor={option.value} className="cursor-pointer font-medium">{option.label}</Label>
+                    <Label htmlFor={option.value} className="cursor-pointer font-medium text-base">{option.label}</Label>
                     <p className="text-sm text-muted-foreground">{option.description}</p>
                   </div>
                 </div>
@@ -555,27 +534,28 @@ export default function OnboardingFlow() {
 
       case 7:
         return (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-8 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Data Consent & AI Plan</h2>
-              <p className="text-muted-foreground">Final step before generating your personalized plan</p>
+              <p className="text-muted-foreground text-sm">Final step before generating your personalized plan</p>
             </div>
             
             <div className="space-y-6">
-              <div className="p-6 bg-gradient-subtle rounded-lg border">
-                <p className="text-center text-foreground">
+              <div className="p-6 bg-gradient-subtle rounded-2xl border shadow-sm">
+                <p className="text-center text-foreground text-base">
                   We'll use your responses to generate an AI-driven Intimacy Health Plan tailored specifically for you.
                 </p>
               </div>
               
-              <div className="flex items-start space-x-3 p-4 rounded-lg border">
+              <div className="flex items-start space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm">
                 <Checkbox 
                   checked={data.dataConsent}
                   onCheckedChange={(checked) => updateData('dataConsent', checked)}
                   id="consent"
+                  className="mt-0.5"
                 />
-                <div className="space-y-1">
-                  <Label htmlFor="consent" className="cursor-pointer">
+                <div className="space-y-2">
+                  <Label htmlFor="consent" className="cursor-pointer text-base font-medium">
                     I agree to share my data with Intima (OpenAI + Supabase).
                   </Label>
                   <p className="text-sm text-muted-foreground">
@@ -666,75 +646,117 @@ export default function OnboardingFlow() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-sunset flex items-center justify-center p-4">
-        <Card className="w-full max-w-lg shadow-card animate-fade-in">
-          <CardContent className="p-8">
-            {renderStep()}
-          </CardContent>
-        </Card>
-      </div>
-    );
+  if (isLoginMode) {
+    return renderLoginForm();
   }
 
   return (
-    <div className="min-h-screen bg-gradient-sunset flex items-center justify-center p-4">
-      <Card className="w-full max-w-lg shadow-card animate-fade-in">
-        {!isLoginMode && (
-          <CardHeader className="text-center">
-            <div className="space-y-3">
-              <Progress value={(currentStep / TOTAL_STEPS) * 100} className="w-full" />
-              <p className="text-sm text-muted-foreground">
-                Step {currentStep} of {TOTAL_STEPS}
-              </p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/30">
+      {/* Progress Bar - Fixed at top */}
+      {currentStep > 1 && currentStep <= TOTAL_STEPS && !showResults && (
+        <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-border/50 z-50">
+          <div className="max-w-sm mx-auto px-6 py-4">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-medium text-muted-foreground">
+                {currentStep - 1} of {TOTAL_STEPS - 1}
+              </span>
+              <span className="text-xs font-medium text-muted-foreground">
+                {Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100)}%
+              </span>
             </div>
-          </CardHeader>
-        )}
-        
-        <CardContent className="p-8">
-          {renderStep()}
-          
-          {!isLoginMode && currentStep > 1 && currentStep < 7 && (
-            <div className="flex gap-3 mt-8">
+            <Progress 
+              value={((currentStep - 1) / (TOTAL_STEPS - 1)) * 100} 
+              className="h-1 bg-muted/50"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-screen p-4 pt-20">
+        <div className="w-full max-w-sm">
+          {isLoading && (
+            <div className="text-center space-y-8 animate-fade-in">
+              <div className="w-20 h-20 mx-auto bg-gradient-sunset rounded-full flex items-center justify-center animate-pulse">
+                <Sparkles className="w-10 h-10 text-white animate-spin" />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold">Creating Your Plan</h2>
+                <p className="text-muted-foreground text-sm animate-fade-in" key={loadingFactIndex}>
+                  {LOADING_FACTS[loadingFactIndex]}
+                </p>
+              </div>
+              <div className="w-full bg-muted/50 rounded-full h-2">
+                <div className="bg-gradient-sunset h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
+              </div>
+            </div>
+          )}
+
+          {!isLoading && !showResults && renderStep()}
+
+          {showResults && (
+            <div className="text-center space-y-8 animate-fade-in">
+              <div className="w-20 h-20 mx-auto bg-gradient-sunset rounded-full flex items-center justify-center">
+                <Heart className="w-10 h-10 text-white" />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+                  Your Plan is Ready!
+                </h2>
+                <p className="text-muted-foreground">
+                  We've created a personalized intimacy journey just for you, {data.firstName}.
+                </p>
+              </div>
               <Button 
-                variant="outline" 
-                onClick={prevStep}
-                className="flex-1"
+                variant="gradient" 
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
               >
-                Back
-              </Button>
-              <Button 
-                onClick={nextStep}
-                disabled={!isStepValid()}
-                className="flex-1"
-              >
-                Next
+                View My Plan
+                <Heart className="ml-2 w-5 h-5" />
               </Button>
             </div>
           )}
-          
-          {!isLoginMode && currentStep === 7 && (
-            <div className="flex gap-3 mt-8">
-              <Button 
-                variant="outline" 
-                onClick={prevStep}
-                className="flex-1"
-              >
-                Back
-              </Button>
-              <Button 
-                variant="glow"
-                onClick={generatePlan}
-                disabled={!data.dataConsent}
-                className="flex-1"
-              >
-                Generate My Plan
-              </Button>
+
+          {/* Navigation - Fixed at bottom */}
+          {!isLoading && !showResults && currentStep > 1 && (
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4">
+              <div className="max-w-sm mx-auto flex justify-between">
+                <Button 
+                  variant="ghost" 
+                  onClick={prevStep}
+                  className="flex items-center gap-2 text-muted-foreground"
+                  size="sm"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back
+                </Button>
+                
+                {currentStep < TOTAL_STEPS - 1 && (
+                  <Button 
+                    onClick={nextStep}
+                    disabled={!isStepValid()}
+                    className="h-11 px-8 rounded-full shadow-sm"
+                    variant="default"
+                  >
+                    Continue
+                  </Button>
+                )}
+                
+                {currentStep === TOTAL_STEPS - 1 && (
+                  <Button 
+                    onClick={generatePlan}
+                    disabled={!isStepValid()}
+                    className="h-11 px-8 rounded-full shadow-sm"
+                    variant="gradient"
+                  >
+                    Generate Plan
+                  </Button>
+                )}
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
