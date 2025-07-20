@@ -146,7 +146,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   Log Out
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-destructive/10 text-destructive">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-destructive/10 text-destructive cursor-pointer"
+                  onClick={() => navigate('/delete-account')}
+                >
                   <Trash2 className="w-4 h-4" />
                   Delete Account
                 </DropdownMenuItem>
