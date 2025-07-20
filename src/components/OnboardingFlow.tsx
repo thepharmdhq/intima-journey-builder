@@ -12,6 +12,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock, Brain, Zap, Shield, Star, Clock, Activity, Eye, Target, Crown, Bell, BellRing, Check } from 'lucide-react';
+import Dashboard from './Dashboard';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -73,6 +74,9 @@ interface OnboardingData {
   // Subscription Flow
   selectedPlan: 'individual' | 'couples';
   selectedBilling: 'monthly' | 'yearly';
+  
+  // Progress Save & Welcome
+  email: string;
 }
 
 interface LoginData {
@@ -80,7 +84,7 @@ interface LoginData {
   password: string;
 }
 
-const TOTAL_STEPS = 23;
+const TOTAL_STEPS = 26;
 
 const INTIMACY_GOALS = [
   'Emotional Closeness',
@@ -220,7 +224,10 @@ export default function OnboardingFlow() {
     
     // Subscription Flow
     selectedPlan: 'individual',
-    selectedBilling: 'monthly'
+    selectedBilling: 'monthly',
+    
+    // Progress Save & Welcome
+    email: ''
   });
 
   const [loginData, setLoginData] = useState<LoginData>({
@@ -329,6 +336,12 @@ export default function OnboardingFlow() {
         return data.selectedPlan; // Plan selection
       case 23:
         return true; // Notification setup
+      case 24:
+        return data.email && /\S+@\S+\.\S+/.test(data.email); // Email validation
+      case 25:
+        return true; // Welcome screen
+      case 26:
+        return true; // Dashboard
       default:
         return true;
     }
@@ -1743,6 +1756,126 @@ export default function OnboardingFlow() {
           </div>
         );
 
+      case 24:
+        return (
+          <div className="space-y-8 animate-fade-in max-w-md mx-auto">
+            <div className="text-center space-y-4">
+              <Mail className="w-16 h-16 mx-auto text-primary" />
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold">Save Your Progress</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  Enter your email to save your personalized intimacy assessment and access your dashboard
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={data.email}
+                    onChange={(e) => updateData('email', e.target.value)}
+                    placeholder="your@email.com"
+                    className="h-12 rounded-xl bg-white border-2 focus:border-primary"
+                  />
+                </div>
+                
+                <div className="bg-muted/50 rounded-xl p-4 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Your data is encrypted and secure</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Target className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Access personalized insights anytime</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Crown className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Continue your 7-day free trial</span>
+                  </div>
+                </div>
+              </div>
+
+              <Button 
+                onClick={nextStep}
+                disabled={!isStepValid()}
+                className="w-full h-12 text-base font-semibold rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+              >
+                Save & Continue
+              </Button>
+
+              <Button 
+                variant="ghost"
+                className="w-full text-muted-foreground text-sm"
+                onClick={nextStep}
+              >
+                Continue as guest
+              </Button>
+            </div>
+          </div>
+        );
+
+      case 25:
+        return (
+          <div className="space-y-8 animate-fade-in max-w-md mx-auto text-center">
+            <div className="space-y-6">
+              <div className="relative">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-white" />
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                  <Star className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <h2 className="text-3xl font-bold">Welcome, {data.firstName}!</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Your personalized {data.selectedPlan === 'couples' ? 'couples' : 'individual'} intimacy journey begins now
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-6 space-y-4">
+              <h3 className="font-semibold text-lg">What's Next?</h3>
+              <div className="space-y-3 text-sm text-left">
+                <div className="flex items-center gap-3">
+                  <Activity className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span>View your personalized intimacy score</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Brain className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span>Get daily AI-powered question prompts</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Zap className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span>Track your progress over time</span>
+                </div>
+                {data.selectedPlan === 'couples' && (
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span>Connect with your partner</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <Button 
+              onClick={nextStep}
+              className="w-full h-14 text-base font-semibold rounded-2xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+            >
+              Start My Journey
+              <Heart className="ml-2 w-5 h-5" />
+            </Button>
+          </div>
+        );
+
+      case 26:
+        return <Dashboard userData={data} />;
+
       default:
         return null;
     }
@@ -1865,10 +1998,10 @@ export default function OnboardingFlow() {
 
                 {currentStep === 23 && (
                   <Button 
-                    onClick={() => setShowResults(true)}
+                    onClick={nextStep}
                     className="h-11 px-8 rounded-full shadow-sm min-h-[44px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                   >
-                    Complete Setup
+                    Continue
                   </Button>
                 )}
               </div>
