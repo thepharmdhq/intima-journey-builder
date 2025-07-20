@@ -324,9 +324,9 @@ export default function OnboardingFlow() {
       case 20:
         return true; // Results page
       case 21:
-        return data.selectedPlan; // Plan selection
-      case 22:
         return true; // Free trial details
+      case 22:
+        return data.selectedPlan; // Plan selection
       case 23:
         return true; // Notification setup
       default:
@@ -1465,10 +1465,87 @@ export default function OnboardingFlow() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
-              <Crown className="w-12 h-12 mx-auto text-primary" />
-              <h2 className="text-2xl font-semibold">Choose Your Plan</h2>
+              <Clock className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Start Your 3-Day FREE Trial</h2>
               <p className="text-muted-foreground text-sm leading-relaxed px-2">
-                Unlock your personalized intimacy journey
+                Experience the full Daily Intimacy journey with no payment due now
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* What They'll Experience */}
+              <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
+                <h3 className="font-semibold mb-4 text-center">Your free trial includes:</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Complete access to your personalized intimacy plan</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Daily guided exercises and activities</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Progress tracking and insights</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Expert-guided communication tools</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trial Timeline */}
+              <div className="space-y-3">
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-2xl border">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-semibold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Today</h4>
+                    <p className="text-sm text-muted-foreground">Start your journey and unlock your plan</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-2xl border">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-semibold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Days 1-3</h4>
+                    <p className="text-sm text-muted-foreground">Experience real progress and deeper connection</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4 p-4 bg-white rounded-2xl border">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <span className="text-muted-foreground text-sm font-semibold">4</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Day 4 & Beyond</h4>
+                    <p className="text-sm text-muted-foreground">Continue your transformation (only if you choose to stay)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trust Signals */}
+              <div className="p-4 bg-muted/30 rounded-2xl text-center">
+                <p className="text-sm font-semibold text-primary mb-1">✨ No Payment Due Now ✨</p>
+                <p className="text-xs text-muted-foreground">Cancel anytime during your trial with zero charges</p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 22:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Crown className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Choose Your Plan to Continue</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">
+                After your free trial, unlock your ongoing intimacy journey
               </p>
             </div>
 
@@ -1525,6 +1602,9 @@ export default function OnboardingFlow() {
                         <span className="text-xs text-muted-foreground line-through">$29</span>
                       )}
                     </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      First charge after your free trial
+                    </p>
                   </div>
                   <div className={cn(
                     "w-6 h-6 rounded-full border-2 flex items-center justify-center",
@@ -1549,7 +1629,7 @@ export default function OnboardingFlow() {
                   onClick={() => updateData('selectedPlan', 'couples')}
                 >
                   <div className="absolute -top-3 left-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
-                    Recommended
+                    Best Value
                   </div>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -1568,6 +1648,9 @@ export default function OnboardingFlow() {
                           <span className="text-xs text-muted-foreground line-through">$49</span>
                         )}
                       </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        First charge after your free trial
+                      </p>
                     </div>
                     <div className={cn(
                       "w-6 h-6 rounded-full border-2 flex items-center justify-center",
@@ -1583,89 +1666,7 @@ export default function OnboardingFlow() {
             </div>
 
             <div className="text-center text-xs text-muted-foreground">
-              3-day free trial • Cancel anytime • Secure payment
-            </div>
-          </div>
-        );
-
-      case 22:
-        return (
-          <div className="space-y-6 animate-fade-in">
-            <div className="text-center space-y-2">
-              <Clock className="w-12 h-12 mx-auto text-primary" />
-              <h2 className="text-2xl font-semibold">Your 3-Day Free Trial</h2>
-              <p className="text-muted-foreground text-sm leading-relaxed px-2">
-                Experience the full Daily Intimacy journey risk-free
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {/* Trial Timeline */}
-              <div className="space-y-4">
-                <div className="flex items-start space-x-4 p-4 bg-primary/5 rounded-2xl border border-primary/20">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <span className="text-white text-sm font-semibold">1</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Today</h4>
-                    <p className="text-sm text-muted-foreground">Start your free trial and access your personalized plan</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4 p-4 bg-muted/20 rounded-2xl">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                    <span className="text-muted-foreground text-sm font-semibold">2</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Days 1-3</h4>
-                    <p className="text-sm text-muted-foreground">Explore exercises, track progress, and see results</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4 p-4 bg-muted/20 rounded-2xl">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                    <span className="text-muted-foreground text-sm font-semibold">3</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Day 4</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {data.selectedBilling === 'monthly' 
-                        ? `First charge of $${data.selectedPlan === 'individual' ? '29' : '49'}` 
-                        : `First charge of $${data.selectedPlan === 'individual' ? '240' : '408'} (yearly)`
-                      }
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* What's Included */}
-              <div className="p-6 bg-card rounded-2xl border">
-                <h3 className="font-semibold mb-4">What's included in your trial:</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-3">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-sm">Personalized intimacy assessment results</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-sm">Daily guided exercises and activities</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="text-sm">Progress tracking and insights</span>
-                  </div>
-                  {data.selectedPlan === 'couples' && (
-                    <div className="flex items-center space-x-3">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span className="text-sm">Partner communication tools</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="text-center text-xs text-muted-foreground">
-              Cancel anytime during your trial with no charges
+              Remember: You're still in your FREE trial • Cancel anytime before day 4
             </div>
           </div>
         );
