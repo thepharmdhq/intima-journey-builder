@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +49,7 @@ const Profile = () => {
   const calculateProfileCompletion = () => {
     if (!userData) return 0;
     const requiredFields = [
-      'firstName', 'age', 'biologicalSex', 'genderIdentity', 'relationshipStatus',
+      'firstName', 'email', 'age', 'biologicalSex', 'genderIdentity', 'relationshipStatus',
       'intimacyGoals', 'conflictComfort', 'sexualSatisfaction', 'bodyImageRating'
     ];
     const completedFields = requiredFields.filter(field => userData[field] !== undefined && userData[field] !== '');
@@ -188,6 +187,13 @@ const Profile = () => {
               value={isEditing ? editedData.firstName : userData.firstName}
               isEditing={isEditing}
               onChange={(value) => setEditedData({...editedData, firstName: value})}
+            />
+            <EditableField
+              label="Email"
+              value={isEditing ? (editedData.email || '') : (userData.email || '')}
+              isEditing={isEditing}
+              type="text"
+              onChange={(value) => setEditedData({...editedData, email: value})}
             />
             <EditableField
               label="Age"
