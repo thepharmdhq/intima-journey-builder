@@ -162,7 +162,11 @@ const LOADING_FACTS = [
   "Body awareness practices can significantly enhance intimate connections."
 ];
 
-export default function OnboardingFlow() {
+interface OnboardingFlowProps {
+  onComplete?: (data: any) => void;
+}
+
+export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoginMode, setIsLoginMode] = useState(false);
   const [isLoginLoading, setIsLoginLoading] = useState(false);
@@ -259,7 +263,12 @@ export default function OnboardingFlow() {
   };
 
   const nextStep = () => {
-    if (currentStep < TOTAL_STEPS) {
+    if (currentStep === 25) {
+      // Final step - complete onboarding
+      if (onComplete) {
+        onComplete(data);
+      }
+    } else if (currentStep < TOTAL_STEPS) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -1873,8 +1882,6 @@ export default function OnboardingFlow() {
           </div>
         );
 
-      case 26:
-        return <Dashboard userData={data} />;
 
       default:
         return null;
