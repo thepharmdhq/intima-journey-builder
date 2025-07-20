@@ -23,7 +23,11 @@ import { Step19 } from './steps/Step19';
 import { Step20 } from './steps/Step20';
 import { Results } from './Results';
 
-export const OnboardingFlow = () => {
+interface OnboardingFlowProps {
+  onComplete?: (data: any) => void;
+}
+
+const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) => {
   const [currentStep, setCurrentStep] = useState(1);
 	const [isLoading, setIsLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -102,7 +106,7 @@ export const OnboardingFlow = () => {
                     className="min-h-[44px] font-medium shadow-soft"
                     size="sm"
                   >
-                    {isGeneratingPlan ? 'Generating...' : 'Generate Plan'}
+                    {isLoading ? 'Generating...' : 'Generate Plan'}
                   </Button>
                 )}
 
@@ -121,3 +125,5 @@ export const OnboardingFlow = () => {
     </div>
   );
 };
+
+export default OnboardingFlow;
