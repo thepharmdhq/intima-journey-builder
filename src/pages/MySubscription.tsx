@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -92,9 +93,11 @@ const MySubscription = () => {
     return Math.round(plan.pricing.yearly / 12);
   };
 
-  const handlePlanChange = (newPlan: string) => {
+  // Updated plan change handler to handle both plan and billing changes
+  const handlePlanChange = (newPlan: string, newBilling: string) => {
     localStorage.setItem('selectedPlan', newPlan);
-    setSubscriptionData(prev => ({ ...prev, selectedPlan: newPlan }));
+    localStorage.setItem('selectedBilling', newBilling);
+    setSubscriptionData({ selectedPlan: newPlan, selectedBilling: newBilling });
   };
 
   const handleBillingChange = (newBilling: string) => {
@@ -110,6 +113,31 @@ const MySubscription = () => {
       month: 'long', 
       day: 'numeric' 
     });
+  };
+
+  // Create all plan combinations
+  const getAllPlanCombinations = () => {
+    const combinations = [];
+    Object.entries(plans).forEach(([planKey, plan]) => {
+      ['monthly', 'yearly'].forEach(billing => {
+        const price = plan.pricing[billing as keyof typeof plan.pricing];
+        const monthlyEquivalent = billing === 'yearly' ? getMonthlyEquivalent(planKey) : null;
+        const isCurrentPlan = planKey === subscriptionData.selectedPlan && billing === subscriptionData.selectedBilling;
+        
+        combinations.push({
+          planKey,
+          billing,
+          plan,
+          price,
+          monthlyEquivalent,
+          isCurrentPlan,
+          displayName: `${plan.name} ${billing === 'monthly' ? 'Monthly' : 'Yearly'}`,
+          billingDisplay: billing === 'monthly' ? 'month' : 'year',
+          billingShort: billing === 'monthly' ? 'mo' : 'yr'
+        });
+      });
+    });
+    return combinations;
   };
 
   return (
@@ -270,7 +298,7 @@ const MySubscription = () => {
           </CardContent>
         </Card>
 
-        {/* Plan Comparison */}
+        {/* Plan Comparison - Updated to show all combinations */}
         <Card className="bg-white/80 border-border/50 shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -280,73 +308,72 @@ const MySubscription = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(plans).map(([planKey, plan]) => {
-                const isCurrentPlan = planKey === subscriptionData.selectedPlan;
-                const planPrice = plan.pricing[subscriptionData.selectedBilling as keyof typeof plan.pricing];
-                const monthlyEquivalent = subscriptionData.selectedBilling === 'yearly' ? getMonthlyEquivalent(planKey) : null;
-                
-                return (
-                  <div
-                    key={planKey}
-                    className={`relative p-4 rounded-lg border-2 transition-all ${
-                      isCurrentPlan 
-                        ? 'border-primary bg-primary/5 shadow-md' 
-                        : 'border-border bg-background hover:border-primary/30 hover:shadow-sm'
-                    }`}
-                  >
-                    {isCurrentPlan && (
-                      <Badge className="absolute -top-3 left-4 bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
-                        Current Plan
-                      </Badge>
-                    )}
-                    
-                    <div className="space-y-3 mt-2">
-                      <div className="flex items-center gap-2">
-                        <plan.icon className={`w-5 h-5 ${isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
-                        <h3 className={`font-semibold ${isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
-                          {plan.name}
-                        </h3>
-                      </div>
-                      
-                      <div className={`text-2xl font-bold ${isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
-                        ${planPrice}
-                        {monthlyEquivalent && (
-                          <span className="text-sm font-normal text-muted-foreground ml-1">
-                            (${monthlyEquivalent}/mo)
-                          </span>
-                        )}
-                        <span className="text-sm font-normal text-muted-foreground">
-                          /{subscriptionData.selectedBilling === 'monthly' ? 'mo' : 'yr'}
-                        </span>
-                      </div>
-                      
-                      <div className="space-y-1">
-                        {plan.features.slice(0, 3).map((feature, index) => (
-                          <div key={index} className="flex items-center gap-2 text-sm">
-                            <Check className={`w-3 h-3 ${isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
-                            <span className="text-muted-foreground">{feature}</span>
-                          </div>
-                        ))}
-                        {plan.features.length > 3 && (
-                          <div className="text-xs text-muted-foreground">
-                            +{plan.features.length - 3} more features
-                          </div>
-                        )}
-                      </div>
-                      
-                      {!isCurrentPlan && (
-                        <Button
-                          className="w-full mt-4"
-                          onClick={() => handlePlanChange(planKey)}
-                          variant="default"
-                        >
-                          Switch to {plan.name}
-                        </Button>
+              {getAllPlanCombinations().map((combo) => (
+                <div
+                  key={`${combo.planKey}-${combo.billing}`}
+                  className={`relative p-4 rounded-lg border-2 transition-all ${
+                    combo.isCurrentPlan 
+                      ? 'border-primary bg-primary/5 shadow-md' 
+                      : 'border-border bg-background hover:border-primary/30 hover:shadow-sm'
+                  }`}
+                >
+                  {combo.isCurrentPlan && (
+                    <Badge className="absolute -top-3 left-4 bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
+                      Current Plan
+                    </Badge>
+                  )}
+                  
+                  <div className="space-y-3 mt-2">
+                    <div className="flex items-center gap-2">
+                      <combo.plan.icon className={`w-5 h-5 ${combo.isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
+                      <h3 className={`font-semibold ${combo.isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
+                        {combo.displayName}
+                      </h3>
+                      {combo.billing === 'yearly' && (
+                        <Badge variant="secondary" className="text-xs">
+                          Save 31%
+                        </Badge>
                       )}
                     </div>
+                    
+                    <div className={`text-2xl font-bold ${combo.isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
+                      ${combo.price}
+                      {combo.monthlyEquivalent && (
+                        <span className="text-sm font-normal text-muted-foreground ml-1">
+                          (${combo.monthlyEquivalent}/mo)
+                        </span>
+                      )}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        /{combo.billingShort}
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      {combo.plan.features.slice(0, 3).map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm">
+                          <Check className={`w-3 h-3 ${combo.isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
+                          <span className="text-muted-foreground">{feature}</span>
+                        </div>
+                      ))}
+                      {combo.plan.features.length > 3 && (
+                        <div className="text-xs text-muted-foreground">
+                          +{combo.plan.features.length - 3} more features
+                        </div>
+                      )}
+                    </div>
+                    
+                    {!combo.isCurrentPlan && (
+                      <Button
+                        className="w-full mt-4"
+                        onClick={() => handlePlanChange(combo.planKey, combo.billing)}
+                        variant="default"
+                      >
+                        Switch to {combo.displayName}
+                      </Button>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
