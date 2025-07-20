@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -270,10 +271,10 @@ export default function OnboardingFlow() {
             <div className="space-y-6">
               <Heart className="w-20 h-20 mx-auto text-primary" />
               <div className="space-y-3">
-                <h1 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
                   Deepen Your Connection
                 </h1>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground text-base sm:text-lg leading-relaxed px-2">
                   Answer a few questions—get your personalized intimacy plan.
                 </p>
               </div>
@@ -307,10 +308,10 @@ export default function OnboardingFlow() {
 
       case 2:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Tell us about yourself</h2>
-              <p className="text-muted-foreground text-sm">Let's start with the basics</p>
+              <p className="text-muted-foreground text-sm leading-relaxed">Let's start with the basics</p>
             </div>
             
             <div className="space-y-4">
@@ -361,11 +362,11 @@ export default function OnboardingFlow() {
 
       case 3:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <Users className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Relationship Status</h2>
-              <p className="text-muted-foreground text-sm">Help us understand your current situation</p>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Help us understand your current situation</p>
             </div>
             
             <div className="space-y-3">
@@ -374,23 +375,23 @@ export default function OnboardingFlow() {
                 onValueChange={(value) => updateData('relationshipStatus', value)}
                 className="space-y-3"
               >
-                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <RadioGroupItem value="Single" id="single" />
-                  <Label htmlFor="single" className="flex-1 cursor-pointer text-base">Single</Label>
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                  <RadioGroupItem value="Single" id="single" className="flex-shrink-0" />
+                  <Label htmlFor="single" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Single</Label>
                 </div>
-                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <RadioGroupItem value="Partnered" id="partnered" />
-                  <Label htmlFor="partnered" className="flex-1 cursor-pointer text-base">Partnered</Label>
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                  <RadioGroupItem value="Partnered" id="partnered" className="flex-shrink-0" />
+                  <Label htmlFor="partnered" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Partnered</Label>
                 </div>
-                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <RadioGroupItem value="Married" id="married" />
-                  <Label htmlFor="married" className="flex-1 cursor-pointer text-base">Married</Label>
+                <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                  <RadioGroupItem value="Married" id="married" className="flex-shrink-0" />
+                  <Label htmlFor="married" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Married</Label>
                 </div>
               </RadioGroup>
               
               {data.relationshipStatus === 'Single' && (
                 <div className="pt-4 animate-slide-up">
-                  <p className="text-sm text-muted-foreground mb-3">When was your last partnership?</p>
+                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">When was your last partnership?</p>
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -400,8 +401,10 @@ export default function OnboardingFlow() {
                           !data.lastPartnership && "text-muted-foreground"
                         )}
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {data.lastPartnership ? format(data.lastPartnership, "PPP") : "Pick a date"}
+                        <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                        <span className="break-words">
+                          {data.lastPartnership ? format(data.lastPartnership, "PPP") : "Pick a date"}
+                        </span>
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
@@ -423,28 +426,28 @@ export default function OnboardingFlow() {
 
       case 4:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Sex & Intimacy History</h2>
-              <p className="text-muted-foreground text-sm">This helps us personalize your recommendations</p>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">This helps us personalize your recommendations</p>
             </div>
             
             <div className="space-y-6">
               <div className="space-y-4">
-                <p className="text-base font-medium text-center">Have you been sexually active?</p>
+                <p className="text-base font-medium text-center leading-relaxed">Have you been sexually active?</p>
                 <div className="space-y-3">
                   <RadioGroup 
                     value={data.sexuallyActive.toString()} 
                     onValueChange={(value) => updateData('sexuallyActive', value === 'true')}
                     className="space-y-3"
                   >
-                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                      <RadioGroupItem value="true" id="active-yes" />
-                      <Label htmlFor="active-yes" className="flex-1 cursor-pointer text-base">Yes</Label>
+                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                      <RadioGroupItem value="true" id="active-yes" className="flex-shrink-0" />
+                      <Label htmlFor="active-yes" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Yes</Label>
                     </div>
-                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                      <RadioGroupItem value="false" id="active-no" />
-                      <Label htmlFor="active-no" className="flex-1 cursor-pointer text-base">No</Label>
+                    <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                      <RadioGroupItem value="false" id="active-no" className="flex-shrink-0" />
+                      <Label htmlFor="active-no" className="flex-1 cursor-pointer text-base leading-relaxed break-words">No</Label>
                     </div>
                   </RadioGroup>
                 </div>
@@ -452,7 +455,7 @@ export default function OnboardingFlow() {
               
               {data.sexuallyActive && (
                 <div className="space-y-6 animate-slide-up">
-                  <p className="text-base font-medium text-center">Number of partners in the past year</p>
+                  <p className="text-base font-medium text-center leading-relaxed">Number of partners in the past year</p>
                   <div className="space-y-4">
                     <Slider
                       value={[data.partnersLastYear]}
@@ -476,25 +479,26 @@ export default function OnboardingFlow() {
 
       case 5:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <MessageCircle className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Intimacy Goals</h2>
-              <p className="text-muted-foreground text-sm">What areas would you like to improve? (Select all that apply)</p>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">What areas would you like to improve? (Select all that apply)</p>
             </div>
             
             <div className="space-y-3">
               {INTIMACY_GOALS.map((goal) => (
                 <div 
                   key={goal}
-                  className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer"
+                  className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
                   onClick={() => handleGoalToggle(goal)}
                 >
                   <Checkbox 
                     checked={data.intimacyGoals.includes(goal)}
                     onChange={() => handleGoalToggle(goal)}
+                    className="flex-shrink-0"
                   />
-                  <Label className="flex-1 cursor-pointer text-base">{goal}</Label>
+                  <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{goal}</Label>
                 </div>
               ))}
             </div>
@@ -503,10 +507,10 @@ export default function OnboardingFlow() {
 
       case 6:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Affection Frequency</h2>
-              <p className="text-muted-foreground text-sm">How often do you currently express or receive affection?</p>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">How often do you currently express or receive affection?</p>
             </div>
             
             <RadioGroup 
@@ -520,11 +524,11 @@ export default function OnboardingFlow() {
                 { value: 'monthly', label: 'Few times per month', description: 'Occasionally throughout the month' },
                 { value: 'rarely', label: 'Rarely', description: 'Very infrequently' }
               ].map((option) => (
-                <div key={option.value} className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <RadioGroupItem value={option.value} id={option.value} />
-                  <div className="flex-1">
-                    <Label htmlFor={option.value} className="cursor-pointer font-medium text-base">{option.label}</Label>
-                    <p className="text-sm text-muted-foreground">{option.description}</p>
+                <div key={option.value} className="flex items-start space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[80px]">
+                  <RadioGroupItem value={option.value} id={option.value} className="flex-shrink-0 mt-1" />
+                  <div className="flex-1 min-w-0 overflow-visible">
+                    <Label htmlFor={option.value} className="cursor-pointer font-medium text-base leading-relaxed break-words block">{option.label}</Label>
+                    <p className="text-sm text-muted-foreground leading-relaxed break-words mt-1">{option.description}</p>
                   </div>
                 </div>
               ))}
@@ -534,31 +538,31 @@ export default function OnboardingFlow() {
 
       case 7:
         return (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
               <h2 className="text-2xl font-semibold">Data Consent & AI Plan</h2>
-              <p className="text-muted-foreground text-sm">Final step before generating your personalized plan</p>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Final step before generating your personalized plan</p>
             </div>
             
             <div className="space-y-6">
               <div className="p-6 bg-gradient-subtle rounded-2xl border shadow-sm">
-                <p className="text-center text-foreground text-base">
+                <p className="text-center text-foreground text-base leading-relaxed">
                   We'll use your responses to generate an AI-driven Intimacy Health Plan tailored specifically for you.
                 </p>
               </div>
               
-              <div className="flex items-start space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm">
+              <div className="flex items-start space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm min-h-[80px]">
                 <Checkbox 
                   checked={data.dataConsent}
                   onCheckedChange={(checked) => updateData('dataConsent', checked)}
                   id="consent"
-                  className="mt-0.5"
+                  className="mt-1 flex-shrink-0"
                 />
-                <div className="space-y-2">
-                  <Label htmlFor="consent" className="cursor-pointer text-base font-medium">
+                <div className="space-y-2 min-w-0 overflow-visible">
+                  <Label htmlFor="consent" className="cursor-pointer text-base font-medium leading-relaxed break-words block">
                     I agree to share my data with Intima (OpenAI + Supabase).
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed break-words">
                     Your data will be used to create personalized recommendations and is stored securely.
                   </p>
                 </div>
@@ -573,11 +577,11 @@ export default function OnboardingFlow() {
             <div className="space-y-4">
               <Loader2 className="w-16 h-16 mx-auto text-primary animate-spin" />
               <h2 className="text-2xl font-semibold">Creating Your Intimacy Plan</h2>
-              <p className="text-muted-foreground">Our AI is analyzing your responses...</p>
+              <p className="text-muted-foreground leading-relaxed">Our AI is analyzing your responses...</p>
             </div>
             
             <div className="p-6 bg-gradient-subtle rounded-lg border">
-              <p className="text-foreground animate-fade-in" key={loadingFactIndex}>
+              <p className="text-foreground animate-fade-in leading-relaxed" key={loadingFactIndex}>
                 {LOADING_FACTS[loadingFactIndex]}
               </p>
             </div>
@@ -592,7 +596,7 @@ export default function OnboardingFlow() {
               <h2 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
                 Your Intimacy Plan is Ready!
               </h2>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground leading-relaxed">
                 Based on your responses, we've created a personalized plan just for you.
               </p>
             </div>
@@ -602,17 +606,17 @@ export default function OnboardingFlow() {
                 <h3 className="font-semibold text-lg mb-3">Recommended Assessments</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>PAIR (Personal Assessment of Intimacy in Relationships)</span>
+                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                    <span className="break-words leading-relaxed">PAIR (Personal Assessment of Intimacy in Relationships)</span>
                   </li>
                   <li className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Gottman Relationship Modules</span>
+                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                    <span className="break-words leading-relaxed">Gottman Relationship Modules</span>
                   </li>
                   {data.sexuallyActive && (
                     <li className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span>FSFI (Female Sexual Function Index)</span>
+                      <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                      <span className="break-words leading-relaxed">FSFI (Female Sexual Function Index)</span>
                     </li>
                   )}
                 </ul>
@@ -621,10 +625,10 @@ export default function OnboardingFlow() {
               <div className="p-6 bg-card rounded-lg border shadow-soft">
                 <h3 className="font-semibold text-lg mb-3">Next Steps</h3>
                 <ul className="space-y-2 text-sm">
-                  <li>• Daily intimacy building exercises</li>
-                  <li>• Weekly check-in questions</li>
-                  <li>• Personalized communication tools</li>
-                  <li>• Progress tracking dashboard</li>
+                  <li className="leading-relaxed">• Daily intimacy building exercises</li>
+                  <li className="leading-relaxed">• Weekly check-in questions</li>
+                  <li className="leading-relaxed">• Personalized communication tools</li>
+                  <li className="leading-relaxed">• Progress tracking dashboard</li>
                 </ul>
               </div>
             </div>
@@ -673,7 +677,7 @@ export default function OnboardingFlow() {
       )}
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-screen p-4 pt-20">
+      <div className="flex items-center justify-center min-h-screen p-4 pt-20 pb-28">
         <div className="w-full max-w-sm">
           {isLoading && (
             <div className="text-center space-y-8 animate-fade-in">
@@ -682,7 +686,7 @@ export default function OnboardingFlow() {
               </div>
               <div className="space-y-4">
                 <h2 className="text-2xl font-semibold">Creating Your Plan</h2>
-                <p className="text-muted-foreground text-sm animate-fade-in" key={loadingFactIndex}>
+                <p className="text-muted-foreground text-sm animate-fade-in leading-relaxed" key={loadingFactIndex}>
                   {LOADING_FACTS[loadingFactIndex]}
                 </p>
               </div>
@@ -703,7 +707,7 @@ export default function OnboardingFlow() {
                 <h2 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
                   Your Plan is Ready!
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   We've created a personalized intimacy journey just for you, {data.firstName}.
                 </p>
               </div>
@@ -719,12 +723,12 @@ export default function OnboardingFlow() {
 
           {/* Navigation - Fixed at bottom */}
           {!isLoading && !showResults && currentStep > 1 && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4 safe-area-bottom">
               <div className="max-w-sm mx-auto flex justify-between">
                 <Button 
                   variant="ghost" 
                   onClick={prevStep}
-                  className="flex items-center gap-2 text-muted-foreground"
+                  className="flex items-center gap-2 text-muted-foreground min-h-[44px]"
                   size="sm"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -735,7 +739,7 @@ export default function OnboardingFlow() {
                   <Button 
                     onClick={nextStep}
                     disabled={!isStepValid()}
-                    className="h-11 px-8 rounded-full shadow-sm"
+                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px]"
                     variant="default"
                   >
                     Continue
@@ -746,7 +750,7 @@ export default function OnboardingFlow() {
                   <Button 
                     onClick={generatePlan}
                     disabled={!isStepValid()}
-                    className="h-11 px-8 rounded-full shadow-sm"
+                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px]"
                     variant="gradient"
                   >
                     Generate Plan
