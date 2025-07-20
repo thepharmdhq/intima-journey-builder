@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface OnboardingFlowProps {
-  onComplete: () => void;
+  onComplete: (data: any) => void;
 }
 
 interface StepContentProps {
@@ -192,9 +192,9 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     )}
 
                     {/* Complete button - final step */}
-                    {currentStep === 23 && (
+                     {currentStep === 23 && (
                       <Button 
-                        onClick={onComplete}
+                        onClick={() => onComplete(formData)}
                         className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-8"
                       >
                         Complete Setup
