@@ -91,7 +91,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-white border border-border/50 shadow-lg">
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-muted/50">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate('/profile')}
+                >
                   <User className="w-4 h-4" />
                   Profile
                 </DropdownMenuItem>
