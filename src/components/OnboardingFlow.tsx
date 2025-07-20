@@ -1961,16 +1961,18 @@ export default function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           {/* Navigation - Fixed at bottom */}
           {!isLoading && !showResults && currentStep > 1 && (
             <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4">
-              <div className="max-w-sm mx-auto flex justify-between">
-                <Button 
-                  variant="ghost" 
-                  onClick={prevStep}
-                  className="flex items-center gap-2 text-muted-foreground min-h-[44px]"
-                  size="sm"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back
-                </Button>
+              <div className={`max-w-sm mx-auto flex ${currentStep >= 19 ? 'justify-center' : 'justify-between'}`}>
+                {currentStep < 19 && (
+                  <Button 
+                    variant="ghost" 
+                    onClick={prevStep}
+                    className="flex items-center gap-2 text-muted-foreground min-h-[44px]"
+                    size="sm"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back
+                  </Button>
+                )}
                 
                 {currentStep < 20 && (
                   <Button 
