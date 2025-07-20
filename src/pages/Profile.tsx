@@ -223,15 +223,27 @@ const Profile = () => {
           <div>
             <h4 className="font-medium mb-2 flex items-center gap-2">
               <Heart className="w-4 h-4" />
-              Love Languages
+              Love Languages (Ranked by Importance)
             </h4>
-            <div className="flex flex-wrap gap-2">
-              {userData.loveLanguages?.map((lang: string, index: number) => (
-                <Badge key={index} variant={index === 0 ? 'default' : 'secondary'}>
-                  #{index + 1} {lang}
-                </Badge>
-              ))}
-            </div>
+            {userData.loveLanguagesRanked && userData.loveLanguagesRanked.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {userData.loveLanguagesRanked.map((lang: string, index: number) => {
+                  let badgeVariant: "default" | "secondary" | "outline" = "outline";
+                  if (index === 0) badgeVariant = "default"; // Most important
+                  else if (index <= 2) badgeVariant = "secondary"; // Moderately important
+                  
+                  return (
+                    <Badge key={index} variant={badgeVariant}>
+                      #{index + 1} {lang}
+                    </Badge>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Complete your onboarding to see your love language preferences
+              </p>
+            )}
           </div>
         </ProfileSection>
 
