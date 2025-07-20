@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -120,7 +121,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   My Subscription
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-muted/50">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate('/support')}
+                >
                   <HelpCircle className="w-4 h-4" />
                   Support
                 </DropdownMenuItem>
