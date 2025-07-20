@@ -112,7 +112,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   <FileText className="w-4 h-4" />
                   My Reports
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-muted/50">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate('/my-subscription')}
+                >
                   <CreditCard className="w-4 h-4" />
                   My Subscription
                 </DropdownMenuItem>

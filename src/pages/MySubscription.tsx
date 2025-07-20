@@ -1,0 +1,386 @@
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { useNavigate } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  Crown, 
+  Calendar, 
+  CreditCard, 
+  Settings, 
+  Users, 
+  User, 
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Heart,
+  FileText,
+  Zap
+} from 'lucide-react';
+
+const MySubscription = () => {
+  const navigate = useNavigate();
+  const [subscriptionData, setSubscriptionData] = useState({
+    selectedPlan: 'individual',
+    selectedBilling: 'monthly'
+  });
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(3);
+
+  useEffect(() => {
+    // Load subscription data from localStorage
+    const savedPlan = localStorage.getItem('selectedPlan') || 'individual';
+    const savedBilling = localStorage.getItem('selectedBilling') || 'monthly';
+    
+    setSubscriptionData({
+      selectedPlan: savedPlan,
+      selectedBilling: savedBilling
+    });
+
+    // Calculate trial days remaining (mock implementation)
+    // In real app, this would be calculated from signup date
+    const signupDate = localStorage.getItem('signupDate');
+    if (signupDate) {
+      const daysSinceSignup = Math.floor((Date.now() - new Date(signupDate).getTime()) / (1000 * 60 * 60 * 24));
+      setTrialDaysRemaining(Math.max(0, 3 - daysSinceSignup));
+    }
+  }, []);
+
+  const plans = {
+    individual: {
+      name: 'Individual',
+      icon: User,
+      features: [
+        'Personal intimacy assessments',
+        'Individual progress tracking',
+        'Personalized insights',
+        'Basic reporting',
+        'Educational resources'
+      ],
+      pricing: {
+        monthly: 9.99,
+        yearly: 99.99
+      }
+    },
+    couples: {
+      name: 'Couples',
+      icon: Users,
+      features: [
+        'Everything in Individual plan',
+        'Partner assessments & tracking',
+        'Relationship insights',
+        'Couples exercises & activities',
+        'Shared progress reports',
+        'Communication tools'
+      ],
+      pricing: {
+        monthly: 19.99,
+        yearly: 199.99
+      }
+    }
+  };
+
+  const currentPlan = plans[subscriptionData.selectedPlan as keyof typeof plans];
+  const currentPrice = currentPlan.pricing[subscriptionData.selectedBilling as keyof typeof currentPlan.pricing];
+  const yearlyDiscount = subscriptionData.selectedBilling === 'yearly' ? '17% off' : null;
+
+  const handlePlanChange = (newPlan: string) => {
+    localStorage.setItem('selectedPlan', newPlan);
+    setSubscriptionData(prev => ({ ...prev, selectedPlan: newPlan }));
+  };
+
+  const handleBillingChange = (newBilling: string) => {
+    localStorage.setItem('selectedBilling', newBilling);
+    setSubscriptionData(prev => ({ ...prev, selectedBilling: newBilling }));
+  };
+
+  const getNextBillingDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + trialDaysRemaining);
+    return today.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/')}
+                className="h-9 w-9 rounded-full"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <div className="flex items-center gap-3">
+                <Crown className="w-6 h-6 text-primary" />
+                <h1 className="text-xl font-bold">My Subscription</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Trial Status Banner */}
+        <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold text-lg">Free Trial Active</h3>
+                </div>
+                <p className="text-muted-foreground">
+                  {trialDaysRemaining > 0 
+                    ? `${trialDaysRemaining} days remaining in your free trial`
+                    : 'Your free trial has ended'
+                  }
+                </p>
+                <div className="w-full bg-muted/50 rounded-full h-2 max-w-xs">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${((3 - trialDaysRemaining) / 3) * 100}%` }}
+                  />
+                </div>
+              </div>
+              {trialDaysRemaining > 0 && (
+                <Badge variant="secondary" className="text-sm">
+                  <Calendar className="w-3 h-3 mr-1" />
+                  Ends {getNextBillingDate()}
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Current Plan Information */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <currentPlan.icon className="w-5 h-5 text-primary" />
+              Current Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">{currentPlan.name} Plan</h3>
+                <p className="text-muted-foreground capitalize">
+                  {subscriptionData.selectedBilling} billing
+                  {yearlyDiscount && (
+                    <Badge variant="secondary" className="ml-2 text-xs">
+                      {yearlyDiscount}
+                    </Badge>
+                  )}
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold">${currentPrice}</div>
+                <div className="text-sm text-muted-foreground">
+                  per {subscriptionData.selectedBilling === 'monthly' ? 'month' : 'year'}
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div>
+              <h4 className="font-medium mb-3">Plan Features</h4>
+              <div className="grid gap-2">
+                {currentPlan.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-primary" />
+                    <span className="text-sm">{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Billing Information */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-primary" />
+              Billing Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Next Billing Date</label>
+                <div className="text-lg font-semibold">{getNextBillingDate()}</div>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Amount</label>
+                <div className="text-lg font-semibold">${currentPrice}</div>
+              </div>
+            </div>
+            
+            <Separator />
+            
+            <div className="space-y-3">
+              <h4 className="font-medium">Billing Cycle</h4>
+              <div className="flex gap-2">
+                <Button
+                  variant={subscriptionData.selectedBilling === 'monthly' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleBillingChange('monthly')}
+                >
+                  Monthly
+                </Button>
+                <Button
+                  variant={subscriptionData.selectedBilling === 'yearly' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleBillingChange('yearly')}
+                >
+                  Yearly
+                  <Badge variant="secondary" className="ml-2 text-xs">
+                    Save 17%
+                  </Badge>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Plan Comparison */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="w-5 h-5 text-primary" />
+              Change Plan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {Object.entries(plans).map(([planKey, plan]) => {
+                const isCurrentPlan = planKey === subscriptionData.selectedPlan;
+                const planPrice = plan.pricing[subscriptionData.selectedBilling as keyof typeof plan.pricing];
+                
+                return (
+                  <div
+                    key={planKey}
+                    className={`relative p-4 rounded-lg border-2 transition-all ${
+                      isCurrentPlan 
+                        ? 'border-primary bg-primary/5' 
+                        : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    {isCurrentPlan && (
+                      <Badge className="absolute -top-2 left-4 bg-primary text-primary-foreground">
+                        Current Plan
+                      </Badge>
+                    )}
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <plan.icon className="w-5 h-5" />
+                        <h3 className="font-semibold">{plan.name}</h3>
+                      </div>
+                      
+                      <div className="text-2xl font-bold">
+                        ${planPrice}
+                        <span className="text-sm font-normal text-muted-foreground">
+                          /{subscriptionData.selectedBilling === 'monthly' ? 'mo' : 'yr'}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        {plan.features.slice(0, 3).map((feature, index) => (
+                          <div key={index} className="flex items-center gap-2 text-sm">
+                            <Check className="w-3 h-3 text-primary" />
+                            <span>{feature}</span>
+                          </div>
+                        ))}
+                        {plan.features.length > 3 && (
+                          <div className="text-xs text-muted-foreground">
+                            +{plan.features.length - 3} more features
+                          </div>
+                        )}
+                      </div>
+                      
+                      {!isCurrentPlan && (
+                        <Button
+                          className="w-full"
+                          onClick={() => handlePlanChange(planKey)}
+                        >
+                          Switch to {plan.name}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Subscription Management Actions */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader>
+            <CardTitle>Manage Subscription</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button variant="outline" className="flex items-center gap-2">
+                <RefreshCw className="w-4 h-4" />
+                Update Payment
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Billing History
+              </Button>
+              <Button variant="outline" className="flex items-center gap-2 text-destructive hover:text-destructive">
+                <AlertCircle className="w-4 h-4" />
+                Cancel Subscription
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Usage Summary */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-primary" />
+              Your Progress
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">5</div>
+                <div className="text-sm text-muted-foreground">Assessments Completed</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">3</div>
+                <div className="text-sm text-muted-foreground">Reports Generated</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">7</div>
+                <div className="text-sm text-muted-foreground">Day Streak</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export default MySubscription;
