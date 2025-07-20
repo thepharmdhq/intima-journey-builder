@@ -1592,14 +1592,18 @@ export default function OnboardingFlow() {
                       Perfect for personal growth and self-discovery
                     </p>
                     <div className="flex items-baseline space-x-2">
-                      <span className="text-3xl font-bold text-primary">
-                        ${data.selectedBilling === 'monthly' ? '29' : '20'}
-                      </span>
-                      <span className="text-muted-foreground text-sm">
-                        /{data.selectedBilling === 'monthly' ? 'month' : 'month'}
-                      </span>
-                      {data.selectedBilling === 'yearly' && (
-                        <span className="text-xs text-muted-foreground line-through">$29</span>
+                      {data.selectedBilling === 'monthly' ? (
+                        <>
+                          <span className="text-3xl font-bold text-primary">$29</span>
+                          <span className="text-muted-foreground text-sm">/month</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-bold text-primary">$240</span>
+                          <span className="text-muted-foreground text-sm">/year</span>
+                          <span className="text-sm text-muted-foreground">($20/month)</span>
+                          <span className="text-xs text-muted-foreground line-through ml-2">$29/month</span>
+                        </>
                       )}
                     </div>
                     <p className="text-xs text-muted-foreground mt-2">
@@ -1638,14 +1642,18 @@ export default function OnboardingFlow() {
                         Designed for deeper connection with your partner
                       </p>
                       <div className="flex items-baseline space-x-2">
-                        <span className="text-3xl font-bold text-primary">
-                          ${data.selectedBilling === 'monthly' ? '49' : '34'}
-                        </span>
-                        <span className="text-muted-foreground text-sm">
-                          /{data.selectedBilling === 'monthly' ? 'month' : 'month'}
-                        </span>
-                        {data.selectedBilling === 'yearly' && (
-                          <span className="text-xs text-muted-foreground line-through">$49</span>
+                        {data.selectedBilling === 'monthly' ? (
+                          <>
+                            <span className="text-3xl font-bold text-primary">$49</span>
+                            <span className="text-muted-foreground text-sm">/month</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="text-3xl font-bold text-primary">$408</span>
+                            <span className="text-muted-foreground text-sm">/year</span>
+                            <span className="text-sm text-muted-foreground">($34/month)</span>
+                            <span className="text-xs text-muted-foreground line-through ml-2">$49/month</span>
+                          </>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-2">
