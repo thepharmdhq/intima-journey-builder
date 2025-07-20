@@ -1887,20 +1887,20 @@ export default function OnboardingFlow() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/30">
-      {/* Progress Bar - Fixed at top */}
-      {currentStep > 1 && currentStep <= TOTAL_STEPS && !showResults && (
+      {/* Progress Bar - Fixed at top, only show for assessment steps */}
+      {currentStep > 1 && currentStep <= 18 && !showResults && (
         <div className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-b border-border/50 z-50">
           <div className="max-w-sm mx-auto px-6 py-4">
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs font-medium text-muted-foreground">
-                {currentStep - 1} of {TOTAL_STEPS - 1}
+                {currentStep - 1} of 17
               </span>
               <span className="text-xs font-medium text-muted-foreground">
-                {Math.round(((currentStep - 1) / (TOTAL_STEPS - 1)) * 100)}%
+                {Math.round(Math.min(((currentStep - 1) / 17) * 100, 100))}%
               </span>
             </div>
             <Progress 
-              value={((currentStep - 1) / (TOTAL_STEPS - 1)) * 100} 
+              value={Math.min(((currentStep - 1) / 17) * 100, 100)} 
               className="h-1 bg-muted/50"
             />
           </div>

@@ -107,27 +107,27 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </header>
 
       {/* Main Dashboard Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-foreground mb-2">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground mb-3">
             Welcome back, {userData.firstName}! 👋
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-lg">
             Your intimacy journey continues. Here's what's happening today.
           </p>
         </div>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Intimacy Score Widget */}
           <Card className="lg:col-span-1 bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary" />
                 Intimacy Score
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="relative w-32 h-32 mx-auto">
                 <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
                   <circle
@@ -170,20 +170,20 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Daily Question Widget */}
           <Card className="lg:col-span-2 bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Brain className="w-5 h-5 text-primary" />
                 Daily Reflection
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-4">
-                <p className="text-sm font-medium mb-3">{todaysQuestion}</p>
+            <CardContent className="space-y-5">
+              <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-5">
+                <p className="text-sm font-medium mb-4">{todaysQuestion}</p>
                 <Textarea
                   value={questionResponse}
                   onChange={(e) => setQuestionResponse(e.target.value)}
                   placeholder="Share your thoughts..."
-                  className="min-h-[80px] border-border/50 bg-white/80"
+                  className="min-h-[100px] border-border/50 bg-white/80"
                 />
               </div>
               <div className="flex justify-between items-center">
