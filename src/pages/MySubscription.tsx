@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -291,23 +290,25 @@ const MySubscription = () => {
                     key={planKey}
                     className={`relative p-4 rounded-lg border-2 transition-all ${
                       isCurrentPlan 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
+                        ? 'border-primary bg-primary/5 shadow-md' 
+                        : 'border-border bg-background hover:border-primary/30 hover:shadow-sm'
                     }`}
                   >
                     {isCurrentPlan && (
-                      <Badge className="absolute -top-2 left-4 bg-primary text-primary-foreground">
+                      <Badge className="absolute -top-3 left-4 bg-primary text-primary-foreground px-3 py-1 text-xs font-semibold">
                         Current Plan
                       </Badge>
                     )}
                     
-                    <div className="space-y-3">
+                    <div className="space-y-3 mt-2">
                       <div className="flex items-center gap-2">
-                        <plan.icon className="w-5 h-5" />
-                        <h3 className="font-semibold">{plan.name}</h3>
+                        <plan.icon className={`w-5 h-5 ${isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
+                        <h3 className={`font-semibold ${isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
+                          {plan.name}
+                        </h3>
                       </div>
                       
-                      <div className="text-2xl font-bold">
+                      <div className={`text-2xl font-bold ${isCurrentPlan ? 'text-primary' : 'text-foreground'}`}>
                         ${planPrice}
                         {monthlyEquivalent && (
                           <span className="text-sm font-normal text-muted-foreground ml-1">
@@ -322,8 +323,8 @@ const MySubscription = () => {
                       <div className="space-y-1">
                         {plan.features.slice(0, 3).map((feature, index) => (
                           <div key={index} className="flex items-center gap-2 text-sm">
-                            <Check className="w-3 h-3 text-primary" />
-                            <span>{feature}</span>
+                            <Check className={`w-3 h-3 ${isCurrentPlan ? 'text-primary' : 'text-muted-foreground'}`} />
+                            <span className="text-muted-foreground">{feature}</span>
                           </div>
                         ))}
                         {plan.features.length > 3 && (
@@ -335,8 +336,9 @@ const MySubscription = () => {
                       
                       {!isCurrentPlan && (
                         <Button
-                          className="w-full"
+                          className="w-full mt-4"
                           onClick={() => handlePlanChange(planKey)}
+                          variant="default"
                         >
                           Switch to {plan.name}
                         </Button>
