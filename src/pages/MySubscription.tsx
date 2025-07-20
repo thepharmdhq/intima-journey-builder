@@ -61,8 +61,8 @@ const MySubscription = () => {
         'Educational resources'
       ],
       pricing: {
-        monthly: 9.99,
-        yearly: 99.99
+        monthly: 29,
+        yearly: 240
       }
     },
     couples: {
@@ -77,15 +77,21 @@ const MySubscription = () => {
         'Communication tools'
       ],
       pricing: {
-        monthly: 19.99,
-        yearly: 199.99
+        monthly: 49,
+        yearly: 408
       }
     }
   };
 
   const currentPlan = plans[subscriptionData.selectedPlan as keyof typeof plans];
   const currentPrice = currentPlan.pricing[subscriptionData.selectedBilling as keyof typeof currentPlan.pricing];
-  const yearlyDiscount = subscriptionData.selectedBilling === 'yearly' ? '17% off' : null;
+  const yearlyDiscount = subscriptionData.selectedBilling === 'yearly' ? '31% off' : null;
+
+  // Calculate monthly equivalent for yearly plans
+  const getMonthlyEquivalent = (planKey: string) => {
+    const plan = plans[planKey as keyof typeof plans];
+    return Math.round(plan.pricing.yearly / 12);
+  };
 
   const handlePlanChange = (newPlan: string) => {
     localStorage.setItem('selectedPlan', newPlan);
@@ -188,7 +194,14 @@ const MySubscription = () => {
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold">${currentPrice}</div>
+                <div className="text-2xl font-bold">
+                  ${currentPrice}
+                  {subscriptionData.selectedBilling === 'yearly' && (
+                    <span className="text-sm font-normal text-muted-foreground ml-1">
+                      (${getMonthlyEquivalent(subscriptionData.selectedPlan)}/month)
+                    </span>
+                  )}
+                </div>
                 <div className="text-sm text-muted-foreground">
                   per {subscriptionData.selectedBilling === 'monthly' ? 'month' : 'year'}
                 </div>
@@ -250,7 +263,7 @@ const MySubscription = () => {
                 >
                   Yearly
                   <Badge variant="secondary" className="ml-2 text-xs">
-                    Save 17%
+                    Save 31%
                   </Badge>
                 </Button>
               </div>
@@ -271,6 +284,7 @@ const MySubscription = () => {
               {Object.entries(plans).map(([planKey, plan]) => {
                 const isCurrentPlan = planKey === subscriptionData.selectedPlan;
                 const planPrice = plan.pricing[subscriptionData.selectedBilling as keyof typeof plan.pricing];
+                const monthlyEquivalent = subscriptionData.selectedBilling === 'yearly' ? getMonthlyEquivalent(planKey) : null;
                 
                 return (
                   <div
@@ -295,6 +309,11 @@ const MySubscription = () => {
                       
                       <div className="text-2xl font-bold">
                         ${planPrice}
+                        {monthlyEquivalent && (
+                          <span className="text-sm font-normal text-muted-foreground ml-1">
+                            (${monthlyEquivalent}/mo)
+                          </span>
+                        )}
                         <span className="text-sm font-normal text-muted-foreground">
                           /{subscriptionData.selectedBilling === 'monthly' ? 'mo' : 'yr'}
                         </span>
