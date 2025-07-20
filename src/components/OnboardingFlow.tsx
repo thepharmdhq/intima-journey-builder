@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle } from 'react-feather';
+import { CheckCircle } from 'lucide-react';
 
 const OnboardingFlow: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState(21);
