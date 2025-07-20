@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { User, Settings, FileText, CreditCard, LogOut, HelpCircle, Trash2, Menu, Heart, Brain, Target, Zap, Award, Clock, BookOpen, MessageCircle, Check, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardProps {
   userData: {
@@ -20,6 +20,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dailyResponse, setDailyResponse] = useState<string>('');
   const [actionCompleted, setActionCompleted] = useState(false);
@@ -94,7 +95,10 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   <User className="w-4 h-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem className="flex items-center gap-3 p-3 hover:bg-muted/50">
+                <DropdownMenuItem 
+                  className="flex items-center gap-3 p-3 hover:bg-muted/50 cursor-pointer"
+                  onClick={() => navigate('/assessments')}
+                >
                   <FileText className="w-4 h-4" />
                   Assessments
                 </DropdownMenuItem>
@@ -350,6 +354,16 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Floating Action Button */}
+      <Button
+        onClick={() => navigate('/assessments')}
+        className="fixed bottom-6 right-6 rounded-full px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300 z-40"
+        size="lg"
+      >
+        <FileText className="w-5 h-5 mr-2" />
+        Go to Assessments
+      </Button>
     </div>
   );
 };
