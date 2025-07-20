@@ -127,7 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
       </header>
 
       {/* Main Dashboard Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-3">
             Welcome back, {userData.firstName}! 👋
@@ -188,170 +188,167 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           </Card>
         </div>
 
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Daily Question Prompt */}
-          <Card className="bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Brain className="w-5 h-5 text-primary" />
-                Daily Question
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-5">
-                <p className="text-sm font-medium mb-4">{todaysQuestion}</p>
-                <div className="flex flex-wrap gap-2">
-                  {['Great', 'Good', 'Could be better', 'Challenging'].map((response) => (
-                    <Button
-                      key={response}
-                      variant={dailyResponse === response ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => handleDailyResponse(response)}
-                      className="rounded-full"
-                    >
-                      {response}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-between items-center">
-                <Badge variant="secondary" className="text-xs">
-                  <Brain className="w-3 h-3 mr-1" />
-                  AI Generated
-                </Badge>
-                {dailyResponse && (
-                  <Badge variant="default" className="text-xs">
-                    <Check className="w-3 h-3 mr-1" />
-                    Answered
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Streak Counter */}
-          <Card className="bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Award className="w-5 h-5 text-primary" />
-                Your Streak
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="text-center space-y-3">
-                <div className="text-3xl font-bold text-primary">{streakDays}</div>
-                <p className="text-sm text-muted-foreground">
-                  You've answered {streakDays} days in a row! 🔥
-                </p>
-                <div className="w-full bg-muted/50 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${(streakDays % 30) * 3.33}%` }}
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {30 - (streakDays % 30)} days until next milestone
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Action Card */}
-          <Card className="lg:col-span-2 bg-gradient-to-r from-primary/10 to-accent/10 border-border/50 shadow-sm">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold">Today's Action</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground max-w-md">
-                    {todaysAction}
-                  </p>
-                </div>
-                <Button 
-                  className="rounded-full" 
-                  onClick={handleActionComplete}
-                  disabled={actionCompleted}
-                >
-                  {actionCompleted ? (
-                    <>
-                      <Check className="w-4 h-4 mr-2" />
-                      Completed
-                    </>
-                  ) : (
-                    'Mark Complete'
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Assessments */}
-          <Card className="bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="w-5 h-5 text-primary" />
-                Recent Assessments
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentAssessments.map((assessment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <assessment.icon className="w-5 h-5 text-primary" />
-                      <div>
-                        <p className="font-medium text-sm">{assessment.name}</p>
-                        <p className="text-xs text-muted-foreground">{assessment.date}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{assessment.score}</span>
-                      <Button variant="outline" size="sm" className="rounded-full">
-                        <RefreshCw className="w-3 h-3 mr-1" />
-                        Retake
-                      </Button>
-                    </div>
-                  </div>
+        {/* Daily Question Prompt */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Brain className="w-5 h-5 text-primary" />
+              Daily Question
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-5">
+              <p className="text-sm font-medium mb-4">{todaysQuestion}</p>
+              <div className="flex flex-wrap gap-2">
+                {['Great', 'Good', 'Could be better', 'Challenging'].map((response) => (
+                  <Button
+                    key={response}
+                    variant={dailyResponse === response ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => handleDailyResponse(response)}
+                    className="rounded-full"
+                  >
+                    {response}
+                  </Button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            <div className="flex justify-between items-center">
+              <Badge variant="secondary" className="text-xs">
+                <Brain className="w-3 h-3 mr-1" />
+                AI Generated
+              </Badge>
+              {dailyResponse && (
+                <Badge variant="default" className="text-xs">
+                  <Check className="w-3 h-3 mr-1" />
+                  Answered
+                </Badge>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Personalized Plan Snapshot */}
-          <Card className="bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary" />
-                Your Focus Areas
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {focusAreas.map((area, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">{area.area}</span>
-                    <Badge variant={area.priority === 'High' ? 'default' : 'secondary'} className="text-xs">
-                      {area.priority}
-                    </Badge>
+        {/* Action Card */}
+        <Card className="bg-gradient-to-r from-primary/10 to-accent/10 border-border/50 shadow-sm">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold">Today's Action</h3>
+                </div>
+                <p className="text-sm text-muted-foreground max-w-md">
+                  {todaysAction}
+                </p>
+              </div>
+              <Button 
+                className="rounded-full" 
+                onClick={handleActionComplete}
+                disabled={actionCompleted}
+              >
+                {actionCompleted ? (
+                  <>
+                    <Check className="w-4 h-4 mr-2" />
+                    Completed
+                  </>
+                ) : (
+                  'Mark Complete'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Streak Counter */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Award className="w-5 h-5 text-primary" />
+              Your Streak
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center space-y-3">
+              <div className="text-3xl font-bold text-primary">{streakDays}</div>
+              <p className="text-sm text-muted-foreground">
+                You've answered {streakDays} days in a row! 🔥
+              </p>
+              <div className="w-full bg-muted/50 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${(streakDays % 30) * 3.33}%` }}
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {30 - (streakDays % 30)} days until next milestone
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Assessments */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Recent Assessments
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentAssessments.map((assessment, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <assessment.icon className="w-5 h-5 text-primary" />
+                    <div>
+                      <p className="font-medium text-sm">{assessment.name}</p>
+                      <p className="text-xs text-muted-foreground">{assessment.date}</p>
+                    </div>
                   </div>
-                  <Progress value={area.progress} className="h-2" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">{assessment.score}</span>
+                    <Button variant="outline" size="sm" className="rounded-full">
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      Retake
+                    </Button>
+                  </div>
                 </div>
               ))}
-              <div className="pt-2 space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Recommended Next:</p>
-                {recommendedAssessments.map((assessment, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span className="text-sm">{assessment}</span>
-                  </div>
-                ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Personalized Plan Snapshot */}
+        <Card className="bg-white/80 border-border/50 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="w-5 h-5 text-primary" />
+              Your Focus Areas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {focusAreas.map((area, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">{area.area}</span>
+                  <Badge variant={area.priority === 'High' ? 'default' : 'secondary'} className="text-xs">
+                    {area.priority}
+                  </Badge>
+                </div>
+                <Progress value={area.progress} className="h-2" />
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+            <div className="pt-2 space-y-2">
+              <p className="text-sm font-medium text-muted-foreground">Recommended Next:</p>
+              {recommendedAssessments.map((assessment, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full"></div>
+                  <span className="text-sm">{assessment}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
