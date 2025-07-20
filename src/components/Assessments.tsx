@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,17 +16,32 @@ interface Assessment {
   isCompleted: boolean;
   lastScore?: number;
   icon: React.ComponentType<any>;
+  sexSpecific?: 'male' | 'female';
 }
 
 const Assessments: React.FC = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [userBiologicalSex, setUserBiologicalSex] = useState<string>('');
+
+  // Get user's biological sex from stored onboarding data
+  useEffect(() => {
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      try {
+        const parsedData = JSON.parse(storedUserData);
+        setUserBiologicalSex(parsedData.biologicalSex || '');
+      } catch (error) {
+        console.log('Could not parse user data for biological sex');
+      }
+    }
+  }, []);
 
   const assessments: Assessment[] = [
     {
       id: 'pair',
       name: 'PAIR Assessment',
-      description: 'Comprehensive relationship evaluation covering communication, intimacy, and compatibility',
+      description: '17-item scale covering emotional, social, sexual, intellectual & recreational intimacy',
       category: 'Relationship Health',
       estimatedTime: 15,
       isRecommended: true,
@@ -37,14 +51,15 @@ const Assessments: React.FC = () => {
     },
     {
       id: 'fsfi',
-      name: 'FSFI Scale',
-      description: 'Female Sexual Function Index - measures sexual satisfaction and function',
+      name: 'Female Sexual Function Index (FSFI)',
+      description: '19 items on desire, arousal, lubrication, orgasm, satisfaction, and pain',
       category: 'Physical Intimacy',
-      estimatedTime: 10,
+      estimatedTime: 12,
       isRecommended: true,
       isCompleted: true,
       lastScore: 7.8,
-      icon: FileText
+      icon: FileText,
+      sexSpecific: 'female'
     },
     {
       id: 'body-image',
@@ -106,15 +121,144 @@ const Assessments: React.FC = () => {
       isRecommended: false,
       isCompleted: false,
       icon: FileText
+    },
+    // New assessments
+    {
+      id: 'rfs',
+      name: 'Relationship Flourishing Scale (RFS)',
+      description: 'Assesses overall relationship health and thriving across multiple domains',
+      category: 'Relationship Health',
+      estimatedTime: 10,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'sssw',
+      name: 'Sexual Satisfaction Scale for Women (SSSW)',
+      description: 'Multi-dimensional measure of female sexual satisfaction',
+      category: 'Physical Intimacy',
+      estimatedTime: 12,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText,
+      sexSpecific: 'female'
+    },
+    {
+      id: 'iief-5',
+      name: 'International Index of Erectile Function (IIEF-5)',
+      description: '5-item male sexual function screener',
+      category: 'Physical Intimacy',
+      estimatedTime: 5,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText,
+      sexSpecific: 'male'
+    },
+    {
+      id: 'ecr-r',
+      name: 'Experiences in Close Relationships—Revised (ECR-R)',
+      description: 'Adult attachment anxiety & avoidance assessment',
+      category: 'Emotional Connection',
+      estimatedTime: 18,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'das',
+      name: 'Dyadic Adjustment Scale (DAS)',
+      description: 'Gold-standard 32-item assessment for satisfaction, cohesion, consensus, and affection',
+      category: 'Relationship Health',
+      estimatedTime: 20,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'csi-16',
+      name: 'Couple Satisfaction Index (CSI-16)',
+      description: 'Brief, highly sensitive 16-item satisfaction scale',
+      category: 'Relationship Health',
+      estimatedTime: 8,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'ras',
+      name: 'Relationship Assessment Scale (RAS)',
+      description: '7-item global relationship satisfaction assessment',
+      category: 'Relationship Health',
+      estimatedTime: 5,
+      isRecommended: false,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'gottman-checkup',
+      name: 'Gottman Relationship Checkup Modules',
+      description: 'Short screens on friendship, conflict, values, and intimacy',
+      category: 'Relationship Health',
+      estimatedTime: 15,
+      isRecommended: true,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'emotional-openness',
+      name: 'Emotional Openness & Self-Disclosure Scale',
+      description: 'Willingness to share thoughts & feelings with your partner',
+      category: 'Emotional Connection',
+      estimatedTime: 10,
+      isRecommended: false,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'passion-intimacy',
+      name: 'Passion and Intimacy Scale',
+      description: 'Separately measures romantic passion, sexual passion & intimacy',
+      category: 'Emotional Connection',
+      estimatedTime: 12,
+      isRecommended: false,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'sexual-satisfaction',
+      name: 'Sexual Satisfaction (SS)',
+      description: 'Brief scale for quick satisfaction snapshots',
+      category: 'Physical Intimacy',
+      estimatedTime: 3,
+      isRecommended: false,
+      isCompleted: false,
+      icon: FileText
+    },
+    {
+      id: 'attachment-screening',
+      name: 'Attachment Style Screening',
+      description: 'Brief check on secure, anxious, and avoidant tendencies',
+      category: 'Self-Assessment',
+      estimatedTime: 5,
+      isRecommended: false,
+      isCompleted: false,
+      icon: FileText
     }
   ];
 
   const categories = ['all', 'Relationship Health', 'Physical Intimacy', 'Emotional Connection', 'Self-Assessment'];
 
-  const recommendedAssessments = assessments.filter(a => a.isRecommended);
+  // Filter assessments based on biological sex
+  const filteredByBiologicalSex = assessments.filter(assessment => {
+    if (!assessment.sexSpecific) return true;
+    return assessment.sexSpecific === userBiologicalSex;
+  });
+
+  const recommendedAssessments = filteredByBiologicalSex.filter(a => a.isRecommended);
   const filteredAssessments = selectedCategory === 'all' 
-    ? assessments 
-    : assessments.filter(a => a.category === selectedCategory);
+    ? filteredByBiologicalSex 
+    : filteredByBiologicalSex.filter(a => a.category === selectedCategory);
 
   const getActionButton = (assessment: Assessment) => {
     if (assessment.isCompleted) {
@@ -143,12 +287,19 @@ const Assessments: React.FC = () => {
             <assessment.icon className="w-5 h-5 text-primary" />
             <div>
               <CardTitle className="text-lg">{assessment.name}</CardTitle>
-              {assessment.isRecommended && (
-                <Badge variant="default" className="text-xs mt-1">
-                  <Star className="w-3 h-3 mr-1" />
-                  Recommended
-                </Badge>
-              )}
+              <div className="flex gap-2 mt-1">
+                {assessment.isRecommended && (
+                  <Badge variant="default" className="text-xs">
+                    <Star className="w-3 h-3 mr-1" />
+                    Recommended
+                  </Badge>
+                )}
+                {assessment.sexSpecific && (
+                  <Badge variant="secondary" className="text-xs">
+                    {assessment.sexSpecific === 'female' ? 'Female-specific' : 'Male-specific'}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
           {getActionButton(assessment)}
