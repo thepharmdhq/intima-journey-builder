@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,11 +10,13 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock, Brain, Zap, Shield, Star, Clock, Activity, Eye, Target } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface OnboardingData {
+  // Basic Demographics (Steps 2-4)
   firstName: string;
   age: string;
   biologicalSex: string;
@@ -24,6 +25,47 @@ interface OnboardingData {
   lastPartnership?: Date;
   sexuallyActive: boolean;
   partnersLastYear: number;
+  
+  // Attachment & Emotional Security (Steps 5-6)
+  anxietyAttachment: number;
+  avoidanceAttachment: number;
+  reachesOutWhenUpset: boolean;
+  
+  // Love Languages (Step 7)
+  loveLanguagesRanked: string[];
+  
+  // Communication & Conflict (Step 8)
+  conflictComfort: number;
+  conflictStyle: string;
+  
+  // Sexual Desire & Patterns (Steps 9-10)
+  desireFrequency: string;
+  arousalTriggers: string[];
+  sexualSatisfaction: number;
+  sexualBlocks: string[];
+  sexualBlocksDescription: string;
+  
+  // Body Awareness & Boundaries (Steps 11-12)
+  bodyExplorationComfort: number;
+  enjoysSensateFocus: string;
+  consentPreferences: string[];
+  activitiesToAvoid: string[];
+  activitiesToAvoidOther: string;
+  
+  // Fantasy & Exploration (Step 13)
+  fantasyOpenness: number;
+  explorationInterests: string[];
+  
+  // Lifestyle & Wellbeing (Steps 14-16)
+  weeklyCheckIns: number;
+  preferredIntimacyTime: string;
+  currentStressLevel: number;
+  sleepQuality: string;
+  bodyImageRating: number;
+  hasBodyImageConcerns: boolean;
+  bodyImageConcernsDescription: string;
+  
+  // Existing Goals & Final Steps (Steps 17-18)
   intimacyGoals: string[];
   affectionFrequency: string;
   dataConsent: boolean;
@@ -34,7 +76,7 @@ interface LoginData {
   password: string;
 }
 
-const TOTAL_STEPS = 9;
+const TOTAL_STEPS = 20;
 
 const INTIMACY_GOALS = [
   'Emotional Closeness',
@@ -44,12 +86,72 @@ const INTIMACY_GOALS = [
   'Other'
 ];
 
+const LOVE_LANGUAGES = [
+  'Words of Affirmation',
+  'Quality Time',
+  'Physical Touch',
+  'Acts of Service',
+  'Gifts'
+];
+
+const AROUSAL_TRIGGERS = [
+  'Physical Touch',
+  'Verbal Affirmations',
+  'Visual Stimuli',
+  'Romantic Scenarios',
+  'Spontaneous Moments',
+  'Planned Intimacy',
+  'Other'
+];
+
+const SEXUAL_BLOCKS = [
+  'Physical Pain',
+  'Performance Anxiety',
+  'Stress/Fatigue',
+  'Body Image Concerns',
+  'Communication Issues',
+  'Time Constraints',
+  'Other'
+];
+
+const CONSENT_PREFERENCES = [
+  'Verbal Check-ins',
+  'Nonverbal Cues',
+  'Safe Words',
+  'Written Agreements',
+  'Other'
+];
+
+const ACTIVITIES_TO_AVOID = [
+  'Rough Play',
+  'Role Playing',
+  'Toys/Accessories',
+  'Public Displays',
+  'Extended Sessions',
+  'Other'
+];
+
+const EXPLORATION_INTERESTS = [
+  'Role-play',
+  'Sensory Play',
+  'Toys & Accessories',
+  'Tantra/Mindfulness',
+  'New Positions',
+  'Fantasy Exploration',
+  'Other'
+];
+
 const LOADING_FACTS = [
   "Did you know? Couples who show affection daily report 40% higher relationship satisfaction.",
   "Research shows that physical touch releases oxytocin, the 'bonding hormone'.",
   "Communication is the #1 predictor of relationship longevity according to relationship experts.",
   "Trust-building exercises can increase intimacy by up to 60% in just 30 days.",
-  "Emotional intimacy often precedes and enhances physical intimacy in lasting relationships."
+  "Emotional intimacy often precedes and enhances physical intimacy in lasting relationships.",
+  "Secure attachment styles are associated with higher relationship satisfaction and intimacy.",
+  "Understanding your love language can improve relationship communication by 70%.",
+  "Conflict resolution skills are learnable and can transform relationship dynamics.",
+  "Sexual satisfaction is strongly linked to overall relationship happiness.",
+  "Body awareness practices can significantly enhance intimate connections."
 ];
 
 export default function OnboardingFlow() {
@@ -59,6 +161,7 @@ export default function OnboardingFlow() {
   const [loginError, setLoginError] = useState('');
   
   const [data, setData] = useState<OnboardingData>({
+    // Basic Demographics
     firstName: '',
     age: '',
     biologicalSex: '',
@@ -66,6 +169,47 @@ export default function OnboardingFlow() {
     relationshipStatus: '',
     sexuallyActive: false,
     partnersLastYear: 0,
+    
+    // Attachment & Emotional Security
+    anxietyAttachment: 3,
+    avoidanceAttachment: 3,
+    reachesOutWhenUpset: false,
+    
+    // Love Languages
+    loveLanguagesRanked: [],
+    
+    // Communication & Conflict
+    conflictComfort: 3,
+    conflictStyle: '',
+    
+    // Sexual Desire & Patterns
+    desireFrequency: '',
+    arousalTriggers: [],
+    sexualSatisfaction: 3,
+    sexualBlocks: [],
+    sexualBlocksDescription: '',
+    
+    // Body Awareness & Boundaries
+    bodyExplorationComfort: 3,
+    enjoysSensateFocus: '',
+    consentPreferences: [],
+    activitiesToAvoid: [],
+    activitiesToAvoidOther: '',
+    
+    // Fantasy & Exploration
+    fantasyOpenness: 3,
+    explorationInterests: [],
+    
+    // Lifestyle & Wellbeing
+    weeklyCheckIns: 2,
+    preferredIntimacyTime: '',
+    currentStressLevel: 3,
+    sleepQuality: '',
+    bodyImageRating: 3,
+    hasBodyImageConcerns: false,
+    bodyImageConcernsDescription: '',
+    
+    // Existing Goals & Final Steps
     intimacyGoals: [],
     affectionFrequency: '',
     dataConsent: false
@@ -96,7 +240,7 @@ export default function OnboardingFlow() {
 
   const updateLoginData = (field: keyof LoginData, value: string) => {
     setLoginData(prev => ({ ...prev, [field]: value }));
-    if (loginError) setLoginError(''); // Clear error when user types
+    if (loginError) setLoginError('');
   };
 
   const nextStep = () => {
@@ -122,12 +266,8 @@ export default function OnboardingFlow() {
 
     try {
       // TODO: Implement Supabase authentication
-      // For now, simulate login process
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate successful login - in real app this would redirect to dashboard
       console.log('Login successful for:', loginData.email);
-      
     } catch (error) {
       setLoginError('Invalid email or password. Please try again.');
     } finally {
@@ -142,12 +282,36 @@ export default function OnboardingFlow() {
       case 3:
         return data.relationshipStatus && (data.relationshipStatus !== 'Single' || data.lastPartnership);
       case 4:
-        return true; // Optional step
+        return true; // Sexual activity is optional
       case 5:
-        return data.intimacyGoals.length > 0;
+        return true; // Attachment sliders always have values
       case 6:
-        return data.affectionFrequency;
+        return true; // Secure attachment check always has value
       case 7:
+        return data.loveLanguagesRanked.length === 5;
+      case 8:
+        return data.conflictStyle;
+      case 9:
+        return data.desireFrequency && data.arousalTriggers.length > 0;
+      case 10:
+        return true; // Sexual satisfaction always has value
+      case 11:
+        return data.enjoysSensateFocus;
+      case 12:
+        return data.consentPreferences.length > 0;
+      case 13:
+        return data.explorationInterests.length > 0;
+      case 14:
+        return data.preferredIntimacyTime;
+      case 15:
+        return data.sleepQuality;
+      case 16:
+        return true; // Body image always has value
+      case 17:
+        return data.intimacyGoals.length > 0;
+      case 18:
+        return data.affectionFrequency;
+      case 19:
         return data.dataConsent;
       default:
         return true;
@@ -161,6 +325,29 @@ export default function OnboardingFlow() {
         ? prev.intimacyGoals.filter(g => g !== goal)
         : [...prev.intimacyGoals, goal]
     }));
+  };
+
+  const handleArrayToggle = (field: keyof OnboardingData, value: string) => {
+    setData(prev => ({
+      ...prev,
+      [field]: (prev[field] as string[]).includes(value)
+        ? (prev[field] as string[]).filter(item => item !== value)
+        : [...(prev[field] as string[]), value]
+    }));
+  };
+
+  const handleLoveLanguageRank = (language: string) => {
+    setData(prev => {
+      const newRanked = [...prev.loveLanguagesRanked];
+      if (newRanked.includes(language)) {
+        // Remove if already selected
+        return { ...prev, loveLanguagesRanked: newRanked.filter(l => l !== language) };
+      } else if (newRanked.length < 5) {
+        // Add if less than 5 selected
+        return { ...prev, loveLanguagesRanked: [...newRanked, language] };
+      }
+      return prev;
+    });
   };
 
   const generatePlan = async () => {
@@ -223,7 +410,7 @@ export default function OnboardingFlow() {
                 onClick={handleLogin}
                 disabled={isLoginLoading || !loginData.email || !loginData.password}
                 className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
-                variant="gradient"
+                variant="default"
               >
                 {isLoginLoading ? (
                   <>
@@ -271,22 +458,21 @@ export default function OnboardingFlow() {
             <div className="space-y-6">
               <Heart className="w-20 h-20 mx-auto text-primary" />
               <div className="space-y-3">
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Deepen Your Connection
                 </h1>
                 <p className="text-muted-foreground text-base sm:text-lg leading-relaxed px-2">
-                  Answer a few questions—get your personalized intimacy plan.
+                  Expert-led assessment to create your personalized intimacy plan
                 </p>
               </div>
             </div>
             
             <div className="space-y-4">
               <Button 
-                variant="gradient" 
                 onClick={nextStep}
-                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
-                Let's Begin
+                Begin Assessment
                 <Sparkles className="ml-2 w-5 h-5" />
               </Button>
 
@@ -310,6 +496,7 @@ export default function OnboardingFlow() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
+              <Users className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Tell us about yourself</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">Let's start with the basics</p>
             </div>
@@ -428,7 +615,7 @@ export default function OnboardingFlow() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-semibold">Sex & Intimacy History</h2>
+              <h2 className="text-2xl font-semibold">Sexual Activity History</h2>
               <p className="text-muted-foreground text-sm leading-relaxed px-2">This helps us personalize your recommendations</p>
             </div>
             
@@ -481,6 +668,635 @@ export default function OnboardingFlow() {
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
+              <Brain className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Attachment Style</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your emotional patterns in relationships</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">I worry my partner doesn't care as much as I do</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.anxietyAttachment]}
+                    onValueChange={(value) => updateData('anxietyAttachment', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Strongly Disagree</span>
+                    <span>Neutral</span>
+                    <span>Strongly Agree</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">I prefer not to depend too much on people</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.avoidanceAttachment]}
+                    onValueChange={(value) => updateData('avoidanceAttachment', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Strongly Disagree</span>
+                    <span>Neutral</span>
+                    <span>Strongly Agree</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 6:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Shield className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Emotional Security</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">How do you handle emotional challenges?</p>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-base font-medium text-center leading-relaxed">When I feel upset, I reach out to my partner</p>
+              <div className="space-y-3">
+                <RadioGroup 
+                  value={data.reachesOutWhenUpset.toString()} 
+                  onValueChange={(value) => updateData('reachesOutWhenUpset', value === 'true')}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="true" id="reaches-yes" className="flex-shrink-0" />
+                    <Label htmlFor="reaches-yes" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Yes, I reach out for support</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="false" id="reaches-no" className="flex-shrink-0" />
+                    <Label htmlFor="reaches-no" className="flex-1 cursor-pointer text-base leading-relaxed break-words">No, I prefer to handle it alone</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 7:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Heart className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Love Languages</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Rank these in order of importance to you (select 1st, 2nd, 3rd, 4th, 5th)</p>
+            </div>
+            
+            <div className="space-y-3">
+              {LOVE_LANGUAGES.map((language) => {
+                const rank = data.loveLanguagesRanked.indexOf(language) + 1;
+                return (
+                  <div 
+                    key={language}
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]",
+                      rank > 0 && "border-primary bg-primary/5"
+                    )}
+                    onClick={() => handleLoveLanguageRank(language)}
+                  >
+                    <span className="text-base leading-relaxed">{language}</span>
+                    {rank > 0 && (
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-semibold">
+                        {rank}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Selected: {data.loveLanguagesRanked.length}/5
+              </p>
+            </div>
+          </div>
+        );
+
+      case 8:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <MessageCircle className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Communication & Conflict</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">How do you handle difficult conversations?</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">How comfortable are you discussing difficult topics?</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.conflictComfort]}
+                    onValueChange={(value) => updateData('conflictComfort', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Very Uncomfortable</span>
+                    <span>Neutral</span>
+                    <span>Very Comfortable</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">When disagreements happen, which best fits?</p>
+                <RadioGroup 
+                  value={data.conflictStyle} 
+                  onValueChange={(value) => updateData('conflictStyle', value)}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="calm-both" id="calm-both" className="flex-shrink-0" />
+                    <Label htmlFor="calm-both" className="flex-1 cursor-pointer text-base leading-relaxed break-words">I calm us both down</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="need-space" id="need-space" className="flex-shrink-0" />
+                    <Label htmlFor="need-space" className="flex-1 cursor-pointer text-base leading-relaxed break-words">I need space before talking</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="get-heated" id="get-heated" className="flex-shrink-0" />
+                    <Label htmlFor="get-heated" className="flex-1 cursor-pointer text-base leading-relaxed break-words">I get heated but work through it</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 9:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Zap className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Sexual Desire & Patterns</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your desires and what turns you on</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">What's your typical desire frequency?</p>
+                <RadioGroup 
+                  value={data.desireFrequency} 
+                  onValueChange={(value) => updateData('desireFrequency', value)}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="daily" id="daily" className="flex-shrink-0" />
+                    <Label htmlFor="daily" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Daily</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="weekly" id="weekly" className="flex-shrink-0" />
+                    <Label htmlFor="weekly" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Weekly</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="monthly" id="monthly" className="flex-shrink-0" />
+                    <Label htmlFor="monthly" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Monthly</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">What turns you on most? (Select all that apply)</p>
+                <div className="space-y-3">
+                  {AROUSAL_TRIGGERS.map((trigger) => (
+                    <div 
+                      key={trigger}
+                      className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
+                      onClick={() => handleArrayToggle('arousalTriggers', trigger)}
+                    >
+                      <Checkbox 
+                        checked={data.arousalTriggers.includes(trigger)}
+                        className="flex-shrink-0"
+                      />
+                      <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{trigger}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 10:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Star className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Sexual Satisfaction</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your satisfaction and any barriers</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Overall, how satisfied are you with your sex life?</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.sexualSatisfaction]}
+                    onValueChange={(value) => updateData('sexualSatisfaction', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Very Unsatisfied</span>
+                    <span>Neutral</span>
+                    <span>Very Satisfied</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Do you experience any recurring blocks? (Select all that apply)</p>
+                <div className="space-y-3">
+                  {SEXUAL_BLOCKS.map((block) => (
+                    <div 
+                      key={block}
+                      className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
+                      onClick={() => handleArrayToggle('sexualBlocks', block)}
+                    >
+                      <Checkbox 
+                        checked={data.sexualBlocks.includes(block)}
+                        className="flex-shrink-0"
+                      />
+                      <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{block}</Label>
+                    </div>
+                  ))}
+                </div>
+                
+                {data.sexualBlocks.length > 0 && (
+                  <div className="pt-2">
+                    <Textarea
+                      value={data.sexualBlocksDescription}
+                      onChange={(e) => updateData('sexualBlocksDescription', e.target.value)}
+                      placeholder="Tell us more about these challenges (optional)"
+                      className="min-h-[80px] bg-white border-border rounded-2xl px-4 py-3 text-base resize-none"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 11:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Activity className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Body & Sensual Awareness</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your comfort with body exploration</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">How comfortable are you exploring your body?</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.bodyExplorationComfort]}
+                    onValueChange={(value) => updateData('bodyExplorationComfort', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Very Uncomfortable</span>
+                    <span>Neutral</span>
+                    <span>Very Comfortable</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Do you enjoy guided sensate focus exercises?</p>
+                <RadioGroup 
+                  value={data.enjoysSensateFocus} 
+                  onValueChange={(value) => updateData('enjoysSensateFocus', value)}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="yes" id="sensate-yes" className="flex-shrink-0" />
+                    <Label htmlFor="sensate-yes" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Yes, I enjoy them</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="no" id="sensate-no" className="flex-shrink-0" />
+                    <Label htmlFor="sensate-no" className="flex-1 cursor-pointer text-base leading-relaxed break-words">No, not for me</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="not-sure" id="sensate-not-sure" className="flex-shrink-0" />
+                    <Label htmlFor="sensate-not-sure" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Not sure, would like to try</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 12:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Shield className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Boundaries & Consent</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Your preferences for communication and boundaries</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">How do you prefer to signal consent? (Select all that apply)</p>
+                <div className="space-y-3">
+                  {CONSENT_PREFERENCES.map((preference) => (
+                    <div 
+                      key={preference}
+                      className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
+                      onClick={() => handleArrayToggle('consentPreferences', preference)}
+                    >
+                      <Checkbox 
+                        checked={data.consentPreferences.includes(preference)}
+                        className="flex-shrink-0"
+                      />
+                      <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{preference}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Are there activities you'd prefer to avoid? (Select all that apply)</p>
+                <div className="space-y-3">
+                  {ACTIVITIES_TO_AVOID.map((activity) => (
+                    <div 
+                      key={activity}
+                      className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
+                      onClick={() => handleArrayToggle('activitiesToAvoid', activity)}
+                    >
+                      <Checkbox 
+                        checked={data.activitiesToAvoid.includes(activity)}
+                        className="flex-shrink-0"
+                      />
+                      <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{activity}</Label>
+                    </div>
+                  ))}
+                </div>
+                
+                {data.activitiesToAvoid.includes('Other') && (
+                  <div className="pt-2">
+                    <Textarea
+                      value={data.activitiesToAvoidOther}
+                      onChange={(e) => updateData('activitiesToAvoidOther', e.target.value)}
+                      placeholder="Please specify other activities you'd prefer to avoid"
+                      className="min-h-[80px] bg-white border-border rounded-2xl px-4 py-3 text-base resize-none"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 13:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Eye className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Fantasy & Exploration</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Your comfort with exploring new experiences</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">How open are you to exploring new fantasies?</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.fantasyOpenness]}
+                    onValueChange={(value) => updateData('fantasyOpenness', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Not Open</span>
+                    <span>Neutral</span>
+                    <span>Very Open</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Which of these interest you? (Select all that apply)</p>
+                <div className="space-y-3">
+                  {EXPLORATION_INTERESTS.map((interest) => (
+                    <div 
+                      key={interest}
+                      className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]"
+                      onClick={() => handleArrayToggle('explorationInterests', interest)}
+                    >
+                      <Checkbox 
+                        checked={data.explorationInterests.includes(interest)}
+                        className="flex-shrink-0"
+                      />
+                      <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{interest}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 14:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Clock className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Lifestyle & Availability</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Planning your intimacy journey</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">How many intimate check-ins can you commit to per week?</p>
+                <div className="space-y-4">
+                  <Slider
+                    value={[data.weeklyCheckIns]}
+                    onValueChange={(value) => updateData('weeklyCheckIns', value[0])}
+                    max={7}
+                    min={0}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="text-center">
+                    <span className="text-3xl font-bold text-primary">{data.weeklyCheckIns}</span>
+                    <span className="text-muted-foreground ml-2 text-base">
+                      {data.weeklyCheckIns === 1 ? 'check-in' : 'check-ins'} per week
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Best time of day for intimacy work?</p>
+                <RadioGroup 
+                  value={data.preferredIntimacyTime} 
+                  onValueChange={(value) => updateData('preferredIntimacyTime', value)}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="morning" id="morning" className="flex-shrink-0" />
+                    <Label htmlFor="morning" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Morning (6AM - 12PM)</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="afternoon" id="afternoon" className="flex-shrink-0" />
+                    <Label htmlFor="afternoon" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Afternoon (12PM - 6PM)</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="evening" id="evening" className="flex-shrink-0" />
+                    <Label htmlFor="evening" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Evening (6PM - 12AM)</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 15:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Activity className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Stress & Well-Being</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your current well-being</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Current stress level</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.currentStressLevel]}
+                    onValueChange={(value) => updateData('currentStressLevel', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Very Low</span>
+                    <span>Moderate</span>
+                    <span>Very High</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Sleep quality last week</p>
+                <RadioGroup 
+                  value={data.sleepQuality} 
+                  onValueChange={(value) => updateData('sleepQuality', value)}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="poor" id="poor" className="flex-shrink-0" />
+                    <Label htmlFor="poor" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Poor - Frequent disruptions, feeling tired</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="average" id="average" className="flex-shrink-0" />
+                    <Label htmlFor="average" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Average - Some good nights, some bad</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="excellent" id="excellent" className="flex-shrink-0" />
+                    <Label htmlFor="excellent" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Excellent - Restful and consistent</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 16:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Target className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Self-Esteem & Body Image</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">Understanding your relationship with your body</p>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Rate how attractive you feel in your skin</p>
+                <div className="space-y-2">
+                  <Slider
+                    value={[data.bodyImageRating]}
+                    onValueChange={(value) => updateData('bodyImageRating', value[0])}
+                    max={5}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Not Attractive</span>
+                    <span>Neutral</span>
+                    <span>Very Attractive</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-base font-medium leading-relaxed">Do you have any body image concerns you'd like support with?</p>
+                <RadioGroup 
+                  value={data.hasBodyImageConcerns.toString()} 
+                  onValueChange={(value) => updateData('hasBodyImageConcerns', value === 'true')}
+                  className="space-y-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="true" id="concerns-yes" className="flex-shrink-0" />
+                    <Label htmlFor="concerns-yes" className="flex-1 cursor-pointer text-base leading-relaxed break-words">Yes, I'd like support</Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 rounded-2xl bg-white border border-border shadow-sm hover:shadow-md transition-all cursor-pointer min-h-[60px]">
+                    <RadioGroupItem value="false" id="concerns-no" className="flex-shrink-0" />
+                    <Label htmlFor="concerns-no" className="flex-1 cursor-pointer text-base leading-relaxed break-words">No, I'm comfortable</Label>
+                  </div>
+                </RadioGroup>
+                
+                {data.hasBodyImageConcerns && (
+                  <div className="pt-4 animate-slide-up">
+                    <Textarea
+                      value={data.bodyImageConcernsDescription}
+                      onChange={(e) => updateData('bodyImageConcernsDescription', e.target.value)}
+                      placeholder="Tell us about any specific concerns you'd like support with (optional)"
+                      className="min-h-[80px] bg-white border-border rounded-2xl px-4 py-3 text-base resize-none"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case 17:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
               <MessageCircle className="w-12 h-12 mx-auto text-primary" />
               <h2 className="text-2xl font-semibold">Intimacy Goals</h2>
               <p className="text-muted-foreground text-sm leading-relaxed px-2">What areas would you like to improve? (Select all that apply)</p>
@@ -495,7 +1311,6 @@ export default function OnboardingFlow() {
                 >
                   <Checkbox 
                     checked={data.intimacyGoals.includes(goal)}
-                    onChange={() => handleGoalToggle(goal)}
                     className="flex-shrink-0"
                   />
                   <Label className="flex-1 cursor-pointer text-base leading-relaxed break-words">{goal}</Label>
@@ -505,7 +1320,7 @@ export default function OnboardingFlow() {
           </div>
         );
 
-      case 6:
+      case 18:
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
@@ -536,7 +1351,7 @@ export default function OnboardingFlow() {
           </div>
         );
 
-      case 7:
+      case 19:
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-2">
@@ -545,7 +1360,7 @@ export default function OnboardingFlow() {
             </div>
             
             <div className="space-y-6">
-              <div className="p-6 bg-gradient-subtle rounded-2xl border shadow-sm">
+              <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl border shadow-sm">
                 <p className="text-center text-foreground text-base leading-relaxed">
                   We'll use your responses to generate an AI-driven Intimacy Health Plan tailored specifically for you.
                 </p>
@@ -571,38 +1386,21 @@ export default function OnboardingFlow() {
           </div>
         );
 
-      case 8:
-        return (
-          <div className="space-y-8 animate-fade-in text-center">
-            <div className="space-y-4">
-              <Loader2 className="w-16 h-16 mx-auto text-primary animate-spin" />
-              <h2 className="text-2xl font-semibold">Creating Your Intimacy Plan</h2>
-              <p className="text-muted-foreground leading-relaxed">Our AI is analyzing your responses...</p>
-            </div>
-            
-            <div className="p-6 bg-gradient-subtle rounded-lg border">
-              <p className="text-foreground animate-fade-in leading-relaxed" key={loadingFactIndex}>
-                {LOADING_FACTS[loadingFactIndex]}
-              </p>
-            </div>
-          </div>
-        );
-
-      case 9:
+      case 20:
         return (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center space-y-4">
-              <Sparkles className="w-16 h-16 mx-auto text-primary animate-pulse-glow" />
-              <h2 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+              <Sparkles className="w-16 h-16 mx-auto text-primary animate-pulse" />
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Your Intimacy Plan is Ready!
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                Based on your responses, we've created a personalized plan just for you.
+                Based on your comprehensive assessment, we've created a personalized plan just for you.
               </p>
             </div>
             
             <div className="space-y-4">
-              <div className="p-6 bg-gradient-subtle rounded-lg border">
+              <div className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg border">
                 <h3 className="font-semibold text-lg mb-3">Recommended Assessments</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center space-x-2">
@@ -619,24 +1417,27 @@ export default function OnboardingFlow() {
                       <span className="break-words leading-relaxed">FSFI (Female Sexual Function Index)</span>
                     </li>
                   )}
+                  <li className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
+                    <span className="break-words leading-relaxed">Attachment Style Deep Dive</span>
+                  </li>
                 </ul>
               </div>
               
-              <div className="p-6 bg-card rounded-lg border shadow-soft">
+              <div className="p-6 bg-card rounded-lg border shadow-sm">
                 <h3 className="font-semibold text-lg mb-3">Next Steps</h3>
                 <ul className="space-y-2 text-sm">
                   <li className="leading-relaxed">• Daily intimacy building exercises</li>
                   <li className="leading-relaxed">• Weekly check-in questions</li>
                   <li className="leading-relaxed">• Personalized communication tools</li>
                   <li className="leading-relaxed">• Progress tracking dashboard</li>
+                  <li className="leading-relaxed">• Expert-guided exploration activities</li>
                 </ul>
               </div>
             </div>
             
             <Button 
-              variant="gradient" 
-              size="lg" 
-              className="w-full text-lg py-6 h-auto"
+              className="w-full text-lg py-6 h-auto bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               onClick={() => {/* Handle signup */}}
             >
               Save My Plan → Sign Up
@@ -681,7 +1482,7 @@ export default function OnboardingFlow() {
         <div className="w-full max-w-sm">
           {isLoading && (
             <div className="text-center space-y-8 animate-fade-in">
-              <div className="w-20 h-20 mx-auto bg-gradient-sunset rounded-full flex items-center justify-center animate-pulse">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-r from-primary to-primary/70 rounded-full flex items-center justify-center animate-pulse">
                 <Sparkles className="w-10 h-10 text-white animate-spin" />
               </div>
               <div className="space-y-4">
@@ -691,7 +1492,7 @@ export default function OnboardingFlow() {
                 </p>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2">
-                <div className="bg-gradient-sunset h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
+                <div className="bg-gradient-to-r from-primary to-primary/70 h-2 rounded-full animate-pulse" style={{width: '70%'}}></div>
               </div>
             </div>
           )}
@@ -700,11 +1501,11 @@ export default function OnboardingFlow() {
 
           {showResults && (
             <div className="text-center space-y-8 animate-fade-in">
-              <div className="w-20 h-20 mx-auto bg-gradient-sunset rounded-full flex items-center justify-center">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-r from-primary to-primary/70 rounded-full flex items-center justify-center">
                 <Heart className="w-10 h-10 text-white" />
               </div>
               <div className="space-y-4">
-                <h2 className="text-3xl font-bold bg-gradient-sunset bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Your Plan is Ready!
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -712,8 +1513,7 @@ export default function OnboardingFlow() {
                 </p>
               </div>
               <Button 
-                variant="gradient" 
-                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md"
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
                 View My Plan
                 <Heart className="ml-2 w-5 h-5" />
@@ -723,7 +1523,7 @@ export default function OnboardingFlow() {
 
           {/* Navigation - Fixed at bottom */}
           {!isLoading && !showResults && currentStep > 1 && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4 safe-area-bottom">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-border/50 p-4">
               <div className="max-w-sm mx-auto flex justify-between">
                 <Button 
                   variant="ghost" 
@@ -750,8 +1550,7 @@ export default function OnboardingFlow() {
                   <Button 
                     onClick={generatePlan}
                     disabled={!isStepValid()}
-                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px]"
-                    variant="gradient"
+                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                   >
                     Generate Plan
                   </Button>
