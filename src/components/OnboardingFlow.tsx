@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
-import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock, Brain, Zap, Shield, Star, Clock, Activity, Eye, Target } from 'lucide-react';
+import { Heart, CalendarIcon, Loader2, Sparkles, Users, MessageCircle, ArrowLeft, Mail, Lock, Brain, Zap, Shield, Star, Clock, Activity, Eye, Target, Crown, Bell, BellRing, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -69,6 +69,10 @@ interface OnboardingData {
   intimacyGoals: string[];
   affectionFrequency: string;
   dataConsent: boolean;
+  
+  // Subscription Flow
+  selectedPlan: 'individual' | 'couples';
+  selectedBilling: 'monthly' | 'yearly';
 }
 
 interface LoginData {
@@ -76,7 +80,7 @@ interface LoginData {
   password: string;
 }
 
-const TOTAL_STEPS = 20;
+const TOTAL_STEPS = 23;
 
 const INTIMACY_GOALS = [
   'Emotional Closeness',
@@ -212,7 +216,11 @@ export default function OnboardingFlow() {
     // Existing Goals & Final Steps
     intimacyGoals: [],
     affectionFrequency: '',
-    dataConsent: false
+    dataConsent: false,
+    
+    // Subscription Flow
+    selectedPlan: 'individual',
+    selectedBilling: 'monthly'
   });
 
   const [loginData, setLoginData] = useState<LoginData>({
@@ -313,6 +321,14 @@ export default function OnboardingFlow() {
         return data.affectionFrequency;
       case 19:
         return data.dataConsent;
+      case 20:
+        return true; // Results page
+      case 21:
+        return data.selectedPlan; // Plan selection
+      case 22:
+        return true; // Free trial details
+      case 23:
+        return true; // Notification setup
       default:
         return true;
     }
@@ -357,8 +373,7 @@ export default function OnboardingFlow() {
     await new Promise(resolve => setTimeout(resolve, 6000));
     
     setIsLoading(false);
-    setShowResults(true);
-    setCurrentStep(TOTAL_STEPS);
+    setCurrentStep(21); // Start subscription flow
   };
 
   const renderLoginForm = () => {
@@ -1438,11 +1453,284 @@ export default function OnboardingFlow() {
             
             <Button 
               className="w-full text-lg py-6 h-auto bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
-              onClick={() => {/* Handle signup */}}
+              onClick={nextStep}
             >
-              Save My Plan → Sign Up
+              Continue to Subscription
               <Heart className="ml-2 w-5 h-5" />
             </Button>
+          </div>
+        );
+
+      case 21:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Crown className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Choose Your Plan</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">
+                Unlock your personalized intimacy journey
+              </p>
+            </div>
+
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center space-x-4 p-4 bg-muted/30 rounded-2xl">
+              <span className={cn("text-sm font-medium", data.selectedBilling === 'monthly' ? 'text-foreground' : 'text-muted-foreground')}>
+                Monthly
+              </span>
+              <button
+                onClick={() => updateData('selectedBilling', data.selectedBilling === 'monthly' ? 'yearly' : 'monthly')}
+                className={cn(
+                  "relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  data.selectedBilling === 'yearly' ? 'bg-primary' : 'bg-muted'
+                )}
+              >
+                <span
+                  className={cn(
+                    "inline-block h-4 w-4 transform rounded-full bg-white transition-transform",
+                    data.selectedBilling === 'yearly' ? 'translate-x-6' : 'translate-x-1'
+                  )}
+                />
+              </button>
+              <span className={cn("text-sm font-medium", data.selectedBilling === 'yearly' ? 'text-foreground' : 'text-muted-foreground')}>
+                Yearly
+                <span className="ml-1 text-xs text-primary font-semibold">Save 30%</span>
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {/* Individual Plan */}
+              <div 
+                className={cn(
+                  "p-6 rounded-2xl border-2 cursor-pointer transition-all",
+                  data.selectedPlan === 'individual' 
+                    ? 'border-primary bg-primary/5' 
+                    : 'border-border bg-white hover:border-primary/50'
+                )}
+                onClick={() => updateData('selectedPlan', 'individual')}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold mb-2">Individual Journey</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Perfect for personal growth and self-discovery
+                    </p>
+                    <div className="flex items-baseline space-x-2">
+                      <span className="text-3xl font-bold text-primary">
+                        ${data.selectedBilling === 'monthly' ? '29' : '20'}
+                      </span>
+                      <span className="text-muted-foreground text-sm">
+                        /{data.selectedBilling === 'monthly' ? 'month' : 'month'}
+                      </span>
+                      {data.selectedBilling === 'yearly' && (
+                        <span className="text-xs text-muted-foreground line-through">$29</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className={cn(
+                    "w-6 h-6 rounded-full border-2 flex items-center justify-center",
+                    data.selectedPlan === 'individual' ? 'border-primary bg-primary' : 'border-muted'
+                  )}>
+                    {data.selectedPlan === 'individual' && (
+                      <Check className="w-3 h-3 text-white" />
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Couples Plan - Only show if partnered or married */}
+              {(data.relationshipStatus === 'Partnered' || data.relationshipStatus === 'Married') && (
+                <div 
+                  className={cn(
+                    "p-6 rounded-2xl border-2 cursor-pointer transition-all relative",
+                    data.selectedPlan === 'couples' 
+                      ? 'border-primary bg-primary/5' 
+                      : 'border-border bg-white hover:border-primary/50'
+                  )}
+                  onClick={() => updateData('selectedPlan', 'couples')}
+                >
+                  <div className="absolute -top-3 left-4 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    Recommended
+                  </div>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold mb-2">Couples Journey</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Designed for deeper connection with your partner
+                      </p>
+                      <div className="flex items-baseline space-x-2">
+                        <span className="text-3xl font-bold text-primary">
+                          ${data.selectedBilling === 'monthly' ? '49' : '34'}
+                        </span>
+                        <span className="text-muted-foreground text-sm">
+                          /{data.selectedBilling === 'monthly' ? 'month' : 'month'}
+                        </span>
+                        {data.selectedBilling === 'yearly' && (
+                          <span className="text-xs text-muted-foreground line-through">$49</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "w-6 h-6 rounded-full border-2 flex items-center justify-center",
+                      data.selectedPlan === 'couples' ? 'border-primary bg-primary' : 'border-muted'
+                    )}>
+                      {data.selectedPlan === 'couples' && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="text-center text-xs text-muted-foreground">
+              3-day free trial • Cancel anytime • Secure payment
+            </div>
+          </div>
+        );
+
+      case 22:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <Clock className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Your 3-Day Free Trial</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">
+                Experience the full Daily Intimacy journey risk-free
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Trial Timeline */}
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4 p-4 bg-primary/5 rounded-2xl border border-primary/20">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm font-semibold">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Today</h4>
+                    <p className="text-sm text-muted-foreground">Start your free trial and access your personalized plan</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4 p-4 bg-muted/20 rounded-2xl">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <span className="text-muted-foreground text-sm font-semibold">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Days 1-3</h4>
+                    <p className="text-sm text-muted-foreground">Explore exercises, track progress, and see results</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4 p-4 bg-muted/20 rounded-2xl">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <span className="text-muted-foreground text-sm font-semibold">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Day 4</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {data.selectedBilling === 'monthly' 
+                        ? `First charge of $${data.selectedPlan === 'individual' ? '29' : '49'}` 
+                        : `First charge of $${data.selectedPlan === 'individual' ? '240' : '408'} (yearly)`
+                      }
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* What's Included */}
+              <div className="p-6 bg-card rounded-2xl border">
+                <h3 className="font-semibold mb-4">What's included in your trial:</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Personalized intimacy assessment results</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Daily guided exercises and activities</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Progress tracking and insights</span>
+                  </div>
+                  {data.selectedPlan === 'couples' && (
+                    <div className="flex items-center space-x-3">
+                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-sm">Partner communication tools</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center text-xs text-muted-foreground">
+              Cancel anytime during your trial with no charges
+            </div>
+          </div>
+        );
+
+      case 23:
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <div className="text-center space-y-2">
+              <BellRing className="w-12 h-12 mx-auto text-primary" />
+              <h2 className="text-2xl font-semibold">Stay Connected</h2>
+              <p className="text-muted-foreground text-sm leading-relaxed px-2">
+                Get gentle reminders to maintain your intimacy journey
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {/* Notification Benefits */}
+              <div className="p-6 bg-primary/5 rounded-2xl border border-primary/20">
+                <h3 className="font-semibold mb-4 text-center">Daily reminders help you:</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <Heart className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Stay consistent with your intimacy practices</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Target className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Remember important check-ins and exercises</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Sparkles className="w-5 h-5 text-primary flex-shrink-0" />
+                    <span className="text-sm">Celebrate progress and milestones</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notification Permission */}
+              <Button 
+                className="w-full h-14 text-base font-semibold rounded-2xl shadow-md bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                onClick={() => {
+                  // Request notification permission
+                  if ('Notification' in window) {
+                    Notification.requestPermission().then(() => {
+                      nextStep();
+                    });
+                  } else {
+                    nextStep();
+                  }
+                }}
+              >
+                <Bell className="mr-2 w-5 h-5" />
+                Enable Notifications
+              </Button>
+
+              <Button 
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={nextStep}
+              >
+                Skip for now
+              </Button>
+            </div>
+
+            <div className="text-center text-xs text-muted-foreground">
+              You can change notification settings anytime in your profile
+            </div>
           </div>
         );
 
@@ -1506,16 +1794,16 @@ export default function OnboardingFlow() {
               </div>
               <div className="space-y-4">
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Your Plan is Ready!
+                  Welcome to Daily Intimacy!
                 </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  We've created a personalized intimacy journey just for you, {data.firstName}.
+                  Your personalized journey begins now, {data.firstName}.
                 </p>
               </div>
               <Button 
                 className="w-full h-14 text-base font-semibold rounded-2xl shadow-md bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               >
-                View My Plan
+                Start My Journey
                 <Heart className="ml-2 w-5 h-5" />
               </Button>
             </div>
@@ -1535,7 +1823,7 @@ export default function OnboardingFlow() {
                   Back
                 </Button>
                 
-                {currentStep < TOTAL_STEPS - 1 && (
+                {currentStep < 20 && (
                   <Button 
                     onClick={nextStep}
                     disabled={!isStepValid()}
@@ -1546,13 +1834,32 @@ export default function OnboardingFlow() {
                   </Button>
                 )}
                 
-                {currentStep === TOTAL_STEPS - 1 && (
+                {currentStep === 19 && (
                   <Button 
                     onClick={generatePlan}
                     disabled={!isStepValid()}
                     className="h-11 px-8 rounded-full shadow-sm min-h-[44px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                   >
                     Generate Plan
+                  </Button>
+                )}
+
+                {(currentStep >= 20 && currentStep < 23) && (
+                  <Button 
+                    onClick={nextStep}
+                    disabled={!isStepValid()}
+                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  >
+                    Continue
+                  </Button>
+                )}
+
+                {currentStep === 23 && (
+                  <Button 
+                    onClick={() => setShowResults(true)}
+                    className="h-11 px-8 rounded-full shadow-sm min-h-[44px] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                  >
+                    Complete Setup
                   </Button>
                 )}
               </div>
