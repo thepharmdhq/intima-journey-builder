@@ -1,12 +1,12 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { User, Settings, FileText, CreditCard, LogOut, HelpCircle, Trash2, Menu, Heart, Brain, Target, Zap, Users, Calendar, Sparkles, TrendingUp, Award, Clock, BookOpen, MessageCircle, Check } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { User, FileText, CreditCard, LogOut, HelpCircle, Trash2, Menu, Heart, Brain, Target, Zap, Users, Sparkles, TrendingUp, Award, Check, BookOpen, MessageCircle } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 
 interface DashboardProps {
   userData: {
@@ -108,26 +108,27 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
       {/* Main Dashboard Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-foreground mb-2">
+        {/* Welcome Section with improved spacing */}
+        <div className="mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
             Welcome back, {userData.firstName}! 👋
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-lg text-muted-foreground">
             Your intimacy journey continues. Here's what's happening today.
           </p>
         </div>
 
-        {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Dashboard Grid with improved spacing */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Intimacy Score Widget */}
           <Card className="lg:col-span-1 bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-primary" />
                 Intimacy Score
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="relative w-32 h-32 mx-auto">
                 <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
                   <circle
@@ -157,7 +158,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
                   </div>
                 </div>
               </div>
-              <div className="text-center space-y-1">
+              <div className="text-center space-y-2">
                 <p className="font-medium text-sm">
                   {intimacyScore >= 80 ? 'Excellent' : intimacyScore >= 60 ? 'Good' : 'Developing'}
                 </p>
@@ -170,15 +171,15 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Daily Question Widget */}
           <Card className="lg:col-span-2 bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Brain className="w-5 h-5 text-primary" />
                 Daily Reflection
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-4">
-                <p className="text-sm font-medium mb-3">{todaysQuestion}</p>
+            <CardContent className="space-y-6">
+              <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-6 space-y-4">
+                <p className="text-sm font-medium mb-4">{todaysQuestion}</p>
                 <Textarea
                   value={questionResponse}
                   onChange={(e) => setQuestionResponse(e.target.value)}
@@ -200,13 +201,13 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Weekly Progress Chart */}
           <Card className="lg:col-span-2 bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-primary" />
                 Weekly Progress
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-4">
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weeklyData}>
@@ -228,18 +229,18 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Streak & Milestones */}
           <Card className="bg-white/80 border-border/50 shadow-sm">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Award className="w-5 h-5 text-primary" />
                 Achievements
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
               <div className="text-center space-y-2">
                 <div className="text-2xl font-bold text-primary">7</div>
                 <p className="text-sm text-muted-foreground">Day Streak</p>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm">
                   <div className="w-2 h-2 bg-primary rounded-full"></div>
                   <span>Completed Assessment</span>
@@ -258,14 +259,14 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Action Card */}
           <Card className="lg:col-span-3 bg-gradient-to-r from-primary/10 to-accent/10 border-border/50 shadow-sm">
-            <CardContent className="p-6">
+            <CardContent className="p-8">
               <div className="flex items-start justify-between">
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Zap className="w-5 h-5 text-primary" />
-                    <h3 className="font-semibold">Today's Micro-Task</h3>
+                    <h3 className="font-semibold text-lg">Today's Micro-Task</h3>
                   </div>
-                  <p className="text-sm text-muted-foreground max-w-md">
+                  <p className="text-muted-foreground max-w-2xl leading-relaxed">
                     Share one thing you appreciate about yourself or your partner. Studies show daily appreciation increases relationship satisfaction by 25%.
                   </p>
                 </div>
@@ -280,15 +281,15 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
           {userData.selectedPlan === 'couples' && (
             /* Partner Check-In */
             <Card className="lg:col-span-2 bg-white/80 border-border/50 shadow-sm">
-              <CardHeader className="pb-3">
+              <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
                   Partner Check-In
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-center space-y-2">
-                  <p className="text-sm text-muted-foreground">
+              <CardContent className="space-y-6">
+                <div className="text-center space-y-4">
+                  <p className="text-muted-foreground">
                     Invite your partner to join your journey
                   </p>
                   <Button variant="outline" className="rounded-full">
@@ -302,20 +303,20 @@ const Dashboard: React.FC<DashboardProps> = ({ userData }) => {
 
           {/* Quick Resources */}
           <Card className={`bg-white/80 border-border/50 shadow-sm ${userData.selectedPlan === 'couples' ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-primary" />
                 Quick Resources
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="ghost" className="w-full justify-start text-sm h-8">
+            <CardContent className="space-y-4">
+              <Button variant="ghost" className="w-full justify-start text-sm h-10">
                 Communication Guide
               </Button>
-              <Button variant="ghost" className="w-full justify-start text-sm h-8">
+              <Button variant="ghost" className="w-full justify-start text-sm h-10">
                 Intimacy Exercises
               </Button>
-              <Button variant="ghost" className="w-full justify-start text-sm h-8">
+              <Button variant="ghost" className="w-full justify-start text-sm h-10">
                 Mindfulness Practices
               </Button>
             </CardContent>
