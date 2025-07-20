@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -28,19 +27,35 @@ import {
   Zap,
   Shield,
   Upload,
-  ArrowLeft
+  ArrowLeft,
+  Menu,
+  X,
+  LifeBuoy
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Support = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeSection, setActiveSection] = useState('faq');
+  const [fabOpen, setFabOpen] = useState(false);
   const [ticketForm, setTicketForm] = useState({
     category: '',
     subject: '',
     description: '',
     attachment: null as File | null
   });
+
+  // Navigation items for FAB menu
+  const navigationItems = [
+    { id: 'faq', label: 'FAQ', icon: HelpCircle, color: 'text-blue-600' },
+    { id: 'help', label: 'Help Widget', icon: LifeBuoy, color: 'text-green-600' },
+    { id: 'ticket', label: 'Submit Ticket', icon: Send, color: 'text-orange-600' },
+    { id: 'status', label: 'System Status', icon: Shield, color: 'text-purple-600' },
+    { id: 'contact', label: 'Contact', icon: Mail, color: 'text-red-600' },
+    { id: 'community', label: 'Community', icon: Users, color: 'text-indigo-600' },
+    { id: 'tutorials', label: 'Tutorials', icon: Book, color: 'text-emerald-600' }
+  ];
 
   // FAQ Data
   const faqCategories = [
@@ -148,9 +163,7 @@ const Support = () => {
 
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle ticket submission
     console.log('Ticket submitted:', ticketForm);
-    // Reset form
     setTicketForm({ category: '', subject: '', description: '', attachment: null });
   };
 
@@ -161,55 +174,16 @@ const Support = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back
-              </Button>
-              <div className="flex items-center gap-3">
-                <Heart className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Support Center
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+  const handleNavigation = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setFabOpen(false);
+  };
 
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-foreground mb-4">How can we help you?</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Get the support you need for your intimacy journey. Find answers, submit tickets, or connect with our community.
-          </p>
-        </div>
-
-        <Tabs defaultValue="faq" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 bg-white/50">
-            <TabsTrigger value="faq">FAQ</TabsTrigger>
-            <TabsTrigger value="help">Help Widget</TabsTrigger>
-            <TabsTrigger value="ticket">Submit Ticket</TabsTrigger>
-            <TabsTrigger value="status">System Status</TabsTrigger>
-            <TabsTrigger value="contact">Contact</TabsTrigger>
-            <TabsTrigger value="community">Community</TabsTrigger>
-            <TabsTrigger value="tutorials">Tutorials</TabsTrigger>
-          </TabsList>
-
-          {/* FAQ Tab */}
-          <TabsContent value="faq" className="space-y-6">
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'faq':
+        return (
+          <div className="space-y-6">
             <Card className="bg-white/80 border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -252,144 +226,146 @@ const Support = () => {
                 </Card>
               ))}
             </div>
-          </TabsContent>
+          </div>
+        );
 
-          {/* Help Widget Tab */}
-          <TabsContent value="help" className="space-y-6">
-            <Card className="bg-white/80 border-border/50 shadow-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <HelpCircle className="w-5 h-5 text-primary" />
-                  Contextual Help
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
-                    <h3 className="font-semibold mb-2">Taking Your First Assessment</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Ready to get started? Here's a quick guide to taking your first intimacy assessment.
-                    </p>
-                    <Button variant="outline" size="sm">
-                      Start Guide
-                    </Button>
-                  </div>
-                  <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
-                    <h3 className="font-semibold mb-2">Understanding Your Results</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Learn how to interpret your intimacy score and what the results mean.
-                    </p>
-                    <Button variant="outline" size="sm">
-                      Learn More
-                    </Button>
-                  </div>
-                  <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
-                    <h3 className="font-semibold mb-2">Account Settings</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Customize your profile, notification preferences, and privacy settings.
-                    </p>
-                    <Button variant="outline" size="sm">
-                      View Settings
-                    </Button>
-                  </div>
-                  <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
-                    <h3 className="font-semibold mb-2">Couples Features</h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Discover how to invite your partner and use couples-specific assessments.
-                    </p>
-                    <Button variant="outline" size="sm">
-                      Explore
-                    </Button>
-                  </div>
+      case 'help':
+        return (
+          <Card className="bg-white/80 border-border/50 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-primary" />
+                Contextual Help
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
+                  <h3 className="font-semibold mb-2">Taking Your First Assessment</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Ready to get started? Here's a quick guide to taking your first intimacy assessment.
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Start Guide
+                  </Button>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
+                  <h3 className="font-semibold mb-2">Understanding Your Results</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Learn how to interpret your intimacy score and what the results mean.
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Learn More
+                  </Button>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
+                  <h3 className="font-semibold mb-2">Account Settings</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Customize your profile, notification preferences, and privacy settings.
+                  </p>
+                  <Button variant="outline" size="sm">
+                    View Settings
+                  </Button>
+                </div>
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg">
+                  <h3 className="font-semibold mb-2">Couples Features</h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Discover how to invite your partner and use couples-specific assessments.
+                  </p>
+                  <Button variant="outline" size="sm">
+                    Explore
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
 
-          {/* Submit Ticket Tab */}
-          <TabsContent value="ticket" className="space-y-6">
-            <Card className="bg-white/80 border-border/50 shadow-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Send className="w-5 h-5 text-primary" />
-                  Submit Support Ticket
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleTicketSubmit} className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Category</label>
-                      <select 
-                        className="w-full p-2 border border-input rounded-md bg-background"
-                        value={ticketForm.category}
-                        onChange={(e) => setTicketForm(prev => ({ ...prev, category: e.target.value }))}
-                        required
-                      >
-                        <option value="">Select a category</option>
-                        <option value="technical">Technical Issue</option>
-                        <option value="billing">Billing Question</option>
-                        <option value="feature">Feature Request</option>
-                        <option value="bug">Bug Report</option>
-                        <option value="general">General Inquiry</option>
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">Subject</label>
-                      <Input
-                        placeholder="Brief description of your issue"
-                        value={ticketForm.subject}
-                        onChange={(e) => setTicketForm(prev => ({ ...prev, subject: e.target.value }))}
-                        required
-                      />
-                    </div>
+      case 'ticket':
+        return (
+          <Card className="bg-white/80 border-border/50 shadow-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Send className="w-5 h-5 text-primary" />
+                Submit Support Ticket
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleTicketSubmit} className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Category</label>
+                    <select 
+                      className="w-full p-2 border border-input rounded-md bg-background"
+                      value={ticketForm.category}
+                      onChange={(e) => setTicketForm(prev => ({ ...prev, category: e.target.value }))}
+                      required
+                    >
+                      <option value="">Select a category</option>
+                      <option value="technical">Technical Issue</option>
+                      <option value="billing">Billing Question</option>
+                      <option value="feature">Feature Request</option>
+                      <option value="bug">Bug Report</option>
+                      <option value="general">General Inquiry</option>
+                    </select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Description</label>
-                    <Textarea
-                      placeholder="Please provide detailed information about your issue or question"
-                      value={ticketForm.description}
-                      onChange={(e) => setTicketForm(prev => ({ ...prev, description: e.target.value }))}
-                      rows={6}
+                    <label className="text-sm font-medium">Subject</label>
+                    <Input
+                      placeholder="Brief description of your issue"
+                      value={ticketForm.subject}
+                      onChange={(e) => setTicketForm(prev => ({ ...prev, subject: e.target.value }))}
                       required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Attachment (Optional)</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="file"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                        id="file-upload"
-                        accept=".png,.jpg,.jpeg,.pdf,.txt"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => document.getElementById('file-upload')?.click()}
-                      >
-                        <Upload className="w-4 h-4 mr-2" />
-                        Choose File
-                      </Button>
-                      {ticketForm.attachment && (
-                        <span className="text-sm text-muted-foreground">
-                          {ticketForm.attachment.name}
-                        </span>
-                      )}
-                    </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Description</label>
+                  <Textarea
+                    placeholder="Please provide detailed information about your issue or question"
+                    value={ticketForm.description}
+                    onChange={(e) => setTicketForm(prev => ({ ...prev, description: e.target.value }))}
+                    rows={6}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Attachment (Optional)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="file-upload"
+                      accept=".png,.jpg,.jpeg,.pdf,.txt"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => document.getElementById('file-upload')?.click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Choose File
+                    </Button>
+                    {ticketForm.attachment && (
+                      <span className="text-sm text-muted-foreground">
+                        {ticketForm.attachment.name}
+                      </span>
+                    )}
                   </div>
-                  <Button type="submit" className="w-full">
-                    <Send className="w-4 h-4 mr-2" />
-                    Submit Ticket
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                </div>
+                <Button type="submit" className="w-full">
+                  <Send className="w-4 h-4 mr-2" />
+                  Submit Ticket
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        );
 
-          {/* System Status Tab */}
-          <TabsContent value="status" className="space-y-6">
+      case 'status':
+        return (
+          <div className="space-y-6">
             <Card className="bg-white/80 border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -448,10 +424,12 @@ const Support = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          {/* Contact Tab */}
-          <TabsContent value="contact" className="space-y-6">
+      case 'contact':
+        return (
+          <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="bg-white/80 border-border/50 shadow-sm">
                 <CardHeader>
@@ -530,10 +508,12 @@ const Support = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          {/* Community Tab */}
-          <TabsContent value="community" className="space-y-6">
+      case 'community':
+        return (
+          <div className="space-y-6">
             <Card className="bg-white/80 border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -599,10 +579,12 @@ const Support = () => {
                 </form>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        );
 
-          {/* Tutorials Tab */}
-          <TabsContent value="tutorials" className="space-y-6">
+      case 'tutorials':
+        return (
+          <div className="space-y-6">
             <Card className="bg-white/80 border-border/50 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -660,9 +642,103 @@ const Support = () => {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </Button>
+              <div className="flex items-center gap-3">
+                <Heart className="w-8 h-8 text-primary" />
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Support Center
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-4">How can we help you?</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Get the support you need for your intimacy journey. Find answers, submit tickets, or connect with our community.
+          </p>
+        </div>
+
+        {/* Content based on active section */}
+        {renderContent()}
       </main>
+
+      {/* Floating Action Button Navigation */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* FAB Menu Items */}
+        <div className={`absolute bottom-16 right-0 space-y-3 transition-all duration-300 ${
+          fabOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}>
+          {navigationItems.map((item) => (
+            <div key={item.id} className="flex items-center gap-3">
+              <div className="bg-gray-800 text-white px-3 py-1 rounded-md text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                {item.label}
+              </div>
+              <Button
+                size="icon"
+                variant={activeSection === item.id ? "default" : "outline"}
+                className={`group relative bg-white/90 hover:bg-white shadow-lg transition-all duration-200 hover:scale-110 ${
+                  activeSection === item.id ? 'ring-2 ring-primary' : ''
+                }`}
+                onClick={() => handleNavigation(item.id)}
+              >
+                <item.icon className={`w-5 h-5 ${activeSection === item.id ? 'text-primary-foreground' : item.color}`} />
+                <div className="absolute -left-2 -top-1 bg-gray-800 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  {item.label}
+                </div>
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        {/* Main FAB Button */}
+        <Button
+          size="icon"
+          className="w-14 h-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-all duration-200 hover:scale-105"
+          onClick={() => setFabOpen(!fabOpen)}
+        >
+          {fabOpen ? (
+            <X className="w-6 h-6 text-primary-foreground" />
+          ) : (
+            <Menu className="w-6 h-6 text-primary-foreground" />
+          )}
+        </Button>
+      </div>
+
+      {/* Backdrop for FAB menu */}
+      {fabOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-40"
+          onClick={() => setFabOpen(false)}
+        />
+      )}
     </div>
   );
 };
